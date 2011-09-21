@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /**
 * Licensed to the Apache Software Foundation (ASF) under one or more
 * contributor license agreements. See the NOTICE file distributed with
@@ -21,24 +19,16 @@ package org.apache.solr.mcf;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.queries.*;
-import org.apache.solr.search.*;
-import org.apache.solr.client.solrj.*;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.common.params.*;
 import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.ShardParams;
 import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.*;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.SimpleOrderedMap;
-import org.apache.solr.core.*;
-import org.apache.solr.handler.component.*;
-import org.apache.solr.request.*;
-import org.apache.solr.util.*;
-import org.apache.solr.util.plugin.*;
+import org.apache.solr.handler.component.ResponseBuilder;
+import org.apache.solr.handler.component.SearchComponent;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.slf4j.*;
-import org.slf4j.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -51,11 +41,12 @@ import java.net.*;
 public class ManifoldCFSecurityFilter extends SearchComponent
 {
   /** The component name */
-  static final public String COMPONENT_NAME = "ManifoldCFSecurityFilter";
+  static final public String COMPONENT_NAME = "mcf";
   /** The parameter that is supposed to contain the authenticated user name, possibly including the domain */
   static final public String AUTHENTICATED_USER_NAME = "AuthenticatedUserName";
-  /** This parameter is an array of strings, which contain the tokens to use if there is no authenticated user name.  It's meant to work with mod_authz_annotate,
-  * running under Apache */
+  /** This parameter is an array of strings, which contain the tokens to use if there is no authenticated user name.
+   * It's meant to work with mod_authz_annotate,
+   * running under Apache */
   static final public String USER_TOKENS = "UserTokens";
   
   /** The queries that we will not attempt to interfere with */
@@ -65,12 +56,12 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   private static final Logger LOG = LoggerFactory.getLogger(ManifoldCFSecurityFilter.class);
 
   // Member variables
-  private boolean security = false;
-  private String authorityBaseURL = null;
-  private String fieldAllowDocument = null;
-  private String fieldDenyDocument = null;
-  private String fieldAllowShare = null;
-  private String fieldDenyShare = null;
+  String authorityBaseURL = null;
+  String fieldAllowDocument = null;
+  String fieldDenyDocument = null;
+  String fieldAllowShare = null;
+  String fieldDenyShare = null;
+  int socketTimeOut;
   
   public ManifoldCFSecurityFilter()
   {
@@ -81,11 +72,11 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   public void init(NamedList args)
   {
     super.init(args);
-    String securityString = (String)args.get("Security");
-    security = ((securityString==null)?true:securityString.equals("on"));
     authorityBaseURL = (String)args.get("AuthorityServiceBaseURL");
     if (authorityBaseURL == null)
       authorityBaseURL = "http://localhost:8345/mcf-authority-service";
+    Integer timeOut = (Integer)args.get("SocketTimeOut");
+    socketTimeOut = timeOut == null ? 300000 : timeOut;
     String allowAttributePrefix = (String)args.get("AllowAttributePrefix");
     String denyAttributePrefix = (String)args.get("DenyAttributePrefix");
     if (allowAttributePrefix == null)
@@ -101,13 +92,12 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   @Override
   public void prepare(ResponseBuilder rb) throws IOException
   {
-    if (!security)
-      return;
-    
     SolrParams params = rb.req.getParams();
+    if (!params.getBool(COMPONENT_NAME, true) || params.getBool(ShardParams.IS_SHARD, false))
+      return;
 
     // Log that we got here
-    LOG.info("prepare() entry params:\n" + params + "\ncontext: " + rb.req.getContext());
+    //LOG.info("prepare() entry params:\n" + params + "\ncontext: " + rb.req.getContext());
 		
     String qry = (String)params.get(CommonParams.Q);
     if (qry != null)
@@ -115,9 +105,9 @@ public class ManifoldCFSecurityFilter extends SearchComponent
       //Check global allowed searches
       for (String ga : globalAllowed)
       {
-	if (qry.equalsIgnoreCase(ga.trim()))
-	  // Allow this query through unchanged
-	  return;
+        if (qry.equalsIgnoreCase(ga.trim()))
+          // Allow this query through unchanged
+          return;
       }
     }
 
@@ -131,27 +121,26 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     {
       // No authenticated user name.
       // mod_authz_annotate may be in use upstream, so look for tokens from it.
+      userAccessTokens = new ArrayList<String>();
       String[] passedTokens = params.getParams(USER_TOKENS);
       if (passedTokens == null)
       {
         // Only return 'public' documents (those with no security tokens at all)
-        LOG.info("ManifoldCFSecurityFilter: Default no-user response (open documents only)");
-        userAccessTokens = new ArrayList<String>();
+        LOG.info("Default no-user response (open documents only)");
       }
       else
       {
         // Only return 'public' documents (those with no security tokens at all)
-        LOG.info("ManifoldCFSecurityFilter: Group tokens received from caller");
-        userAccessTokens = new ArrayList<String>();
-        for (int i = 0; i < passedTokens.length; i++)
+        LOG.info("Group tokens received from caller");
+        for (String passedToken : passedTokens)
         {
-          userAccessTokens.add(passedTokens[i]);
+          userAccessTokens.add(passedToken);
         }
       }
     }
     else
     {
-      LOG.info("ManifoldCFSecurityFilter: Trying to match docs for user '"+authenticatedUserName+"'");
+      LOG.info("Trying to match docs for user '"+authenticatedUserName+"'");
       // Valid authenticated user name.  Look up access tokens for the user.
       // Check the configuration arguments for validity
       if (authorityBaseURL == null)
@@ -197,7 +186,7 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   @Override
   public void process(ResponseBuilder rb) throws IOException
   {
-    LOG.info("ManifoldCFSecurityFilter: process() called");
+    //LOG.info("process() called");
   }
 
   /** Calculate a complete subclause, representing something like:
@@ -215,9 +204,8 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(allowField,"*"))),BooleanClause.Occur.MUST_NOT));
     subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(denyField,"*"))),BooleanClause.Occur.MUST_NOT));
     orFilter.add(new FilterClause(subUnprotectedClause,BooleanClause.Occur.SHOULD));
-    for (int i = 0; i < userAccessTokens.size(); i++)
+    for (String accessToken : userAccessTokens)
     {
-      String accessToken = userAccessTokens.get(i);
       TermsFilter tf = new TermsFilter();
       tf.addTerm(new Term(allowField,accessToken));
       orFilter.add(new FilterClause(tf,BooleanClause.Occur.SHOULD));
@@ -241,7 +229,7 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   @Override
   public String getVersion()
   {
-    return "$Revision: 02.05.10096 $";
+    return "$Revision$";
   }
 
   @Override
@@ -253,7 +241,7 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   @Override
   public String getSource()
   {
-    return "ManifoldCFSecurityFilter.java $";
+    return "$URL$";
   }
 	
   // Protected methods
@@ -269,55 +257,55 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     GetMethod method = new GetMethod(theURL);
     try
     {
-      method.getParams().setParameter("http.socket.timeout", new Integer(300000));
+      method.getParams().setParameter("http.socket.timeout", socketTimeOut);
       method.setFollowRedirects(true);
       int rval = client.executeMethod(method);
       if (rval != 200)
       {
-	String response = method.getResponseBodyAsString();
-	throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Couldn't fetch user's access tokens from ManifoldCF authority service: "+Integer.toString(rval)+"; "+response);
+        String response = method.getResponseBodyAsString();
+        throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Couldn't fetch user's access tokens from ManifoldCF authority service: "+Integer.toString(rval)+"; "+response);
       }
       InputStream is = method.getResponseBodyAsStream();
       try
       {
-	Reader r = new InputStreamReader(is,"utf-8");
-	try
-	{
-	  BufferedReader br = new BufferedReader(r);
-	  try
-	  {
-	    // Read the tokens, one line at a time.  If any authorities are down, we have no current way to note that, but someday we will.
-	    List<String> tokenList = new ArrayList<String>();
-	    while (true)
-	    {
-	      String line = br.readLine();
-	      if (line == null)
-		break;
-	      if (line.startsWith("TOKEN:"))
-	      {
-		tokenList.add(line.substring("TOKEN:".length()));
-	      }
-	      else
-	      {
-		// It probably says something about the state of the authority(s) involved, so log it
-		LOG.info("ManifoldCFSecurityFilter: For user '"+authenticatedUserName+"', saw authority response "+line);
-	      }
-	    }
-	    return tokenList;
-	  }
-	  finally
-	  {
-	    br.close();
-	  }
-	}
-	finally
-	{
-	  r.close();
-	}
+        Reader r = new InputStreamReader(is,"utf-8");
+        try
+        {
+          BufferedReader br = new BufferedReader(r);
+          try
+          {
+            // Read the tokens, one line at a time.  If any authorities are down, we have no current way to note that, but someday we will.
+            List<String> tokenList = new ArrayList<String>();
+            while (true)
+            {
+              String line = br.readLine();
+              if (line == null)
+                break;
+              if (line.startsWith("TOKEN:"))
+              {
+                tokenList.add(line.substring("TOKEN:".length()));
+              }
+              else
+              {
+                // It probably says something about the state of the authority(s) involved, so log it
+                LOG.info("For user '"+authenticatedUserName+"', saw authority response "+line);
+              }
+            }
+            return tokenList;
+          }
+          finally
+          {
+            br.close();
+          }
+        }
+        finally
+        {
+          r.close();
+        }
       }
       finally
       {
-	is.close();
+        is.close();
       }
     }
     finally
