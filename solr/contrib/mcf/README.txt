@@ -1,0 +1,31 @@
+Getting Started
+---------------
+To start using Solr ManifoldCFSecurityFilter, you first need ManifoldCF installed and running.  See:
+http://incubator.apache.org/incubator/connectors/how-to-build-and-deploy.html.
+
+Then, you will need to add fields to your Solr schema.xml file that can be used to contain document
+authorization information.  There will need to be four of these fields, an 'allow' field for both
+documents and shares, and a 'deny' field for both documents and shares.  For example:
+
+  <field name="allow_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
+  <field name="allow_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
+  <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
+  <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
+
+Next, modify your solrconfig.xml to add the search component:
+
+  <!-- ManifoldCF document security enforcement component -->
+  <searchComponent name="manifoldCFSecurity"
+    class="org.apache.solr.auth.ManifoldCFSecurityFilter">
+    <str name="AuthorityServiceBaseURL">http://localhost:8345/mcf-authority-service</str>
+  </searchComponent>
+
+Hook up the search component in the solrconfig.xml file wherever you want it, e.g.:
+
+<requestHandler name="search" class="solr.SearchHandler" default="true">
+  <arr name="last-components">
+    <str>manifoldCFSecurity</str>
+  </arr>
+  ...
+</requestHandler>
+
