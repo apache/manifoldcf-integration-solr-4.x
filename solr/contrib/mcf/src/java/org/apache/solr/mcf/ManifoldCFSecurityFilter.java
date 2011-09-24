@@ -150,7 +150,8 @@ public class ManifoldCFSecurityFilter extends SearchComponent
       userAccessTokens = getAccessTokens(authenticatedUserName);
     }
 
-    BooleanFilter bf = new BooleanFilter();
+    BooleanQuery bq = new BooleanQuery();
+    //bf.setMaxClauseCount(100000);
     
     if (userAccessTokens.size() == 0)
     {
@@ -159,28 +160,27 @@ public class ManifoldCFSecurityFilter extends SearchComponent
       // (fieldAllowShare is empty AND fieldDenyShare is empty AND fieldAllowDocument is empty AND fieldDenyDocument is empty)
       // We're trying to map to:  -(fieldAllowShare:*) , which should be pretty efficient in Solr because it is negated.  If this turns out not to be so, then we should
       // have the SolrConnector inject a special token into these fields when they otherwise would be empty, and we can trivially match on that token.
-      bf.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(fieldAllowShare,"*"))),BooleanClause.Occur.MUST_NOT));
-      bf.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(fieldDenyShare,"*"))),BooleanClause.Occur.MUST_NOT));
-      bf.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(fieldAllowDocument,"*"))),BooleanClause.Occur.MUST_NOT));
-      bf.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(fieldDenyDocument,"*"))),BooleanClause.Occur.MUST_NOT));
+      bq.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
+      bq.add(new WildcardQuery(new Term(fieldAllowShare,"*")),BooleanClause.Occur.MUST_NOT);
+      bq.add(new WildcardQuery(new Term(fieldDenyShare,"*")),BooleanClause.Occur.MUST_NOT);
+      bq.add(new WildcardQuery(new Term(fieldAllowDocument,"*")),BooleanClause.Occur.MUST_NOT);
+      bq.add(new WildcardQuery(new Term(fieldDenyDocument,"*")),BooleanClause.Occur.MUST_NOT);
     }
     else
     {
       // Extend the query appropriately for each user access token.
-      bf.add(new FilterClause(calculateCompleteSubfilter(fieldAllowShare,fieldDenyShare,userAccessTokens),BooleanClause.Occur.MUST));
-      bf.add(new FilterClause(calculateCompleteSubfilter(fieldAllowDocument,fieldDenyDocument,userAccessTokens),BooleanClause.Occur.MUST));
+      bq.add(calculateCompleteSubquery(fieldAllowShare,fieldDenyShare,userAccessTokens),BooleanClause.Occur.MUST);
+      bq.add(calculateCompleteSubquery(fieldAllowDocument,fieldDenyDocument,userAccessTokens),BooleanClause.Occur.MUST);
     }
 
     // Concatenate with the user's original query.
-    //FilteredQuery query = new FilteredQuery(rb.getQuery(),bf);
-    //rb.setQuery(query);
     List<Query> list = rb.getFilters();
     if (list == null)
     {
       list = new ArrayList<Query>();
       rb.setFilters(list);
     }
-    list.add(new ConstantScoreQuery(bf));
+    list.add(new ConstantScoreQuery(bq));
   }
 
   @Override
@@ -193,26 +193,23 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   * ((fieldAllowShare is empty AND fieldDenyShare is empty) OR fieldAllowShare HAS token1 OR fieldAllowShare HAS token2 ...)
   *     AND fieldDenyShare DOESN'T_HAVE token1 AND fieldDenyShare DOESN'T_HAVE token2 ...
   */
-  protected Filter calculateCompleteSubfilter(String allowField, String denyField, List<String> userAccessTokens)
+  protected Query calculateCompleteSubquery(String allowField, String denyField, List<String> userAccessTokens)
   {
-    BooleanFilter bf = new BooleanFilter();
+    BooleanQuery bq = new BooleanQuery();
+    bq.setMaxClauseCount(1000000);
     
-    // Add a clause for each token.  This will be added directly to the main filter (as a deny test), as well as to an OR's subclause (as an allow test).
     // Add the empty-acl case
-    BooleanFilter subUnprotectedClause = new BooleanFilter();
-    subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(allowField,"*"))),BooleanClause.Occur.MUST_NOT));
-    subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(denyField,"*"))),BooleanClause.Occur.MUST_NOT));
-    bf.add(new FilterClause(subUnprotectedClause,BooleanClause.Occur.SHOULD));
+    BooleanQuery subUnprotectedClause = new BooleanQuery();
+    subUnprotectedClause.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
+    subUnprotectedClause.add(new WildcardQuery(new Term(allowField,"*")),BooleanClause.Occur.MUST_NOT);
+    subUnprotectedClause.add(new WildcardQuery(new Term(denyField,"*")),BooleanClause.Occur.MUST_NOT);
+    bq.add(subUnprotectedClause,BooleanClause.Occur.SHOULD);
     for (String accessToken : userAccessTokens)
     {
-      TermsFilter tf = new TermsFilter();
-      tf.addTerm(new Term(allowField,accessToken));
-      bf.add(new FilterClause(tf,BooleanClause.Occur.SHOULD));
-      tf = new TermsFilter();
-      tf.addTerm(new Term(denyField,accessToken));
-      bf.add(new FilterClause(tf,BooleanClause.Occur.MUST_NOT));
+      bq.add(new TermQuery(new Term(allowField,accessToken)),BooleanClause.Occur.SHOULD);
+      bq.add(new TermQuery(new Term(denyField,accessToken)),BooleanClause.Occur.MUST_NOT);
     }
-    return bf;
+    return bq;
   }
   
   //---------------------------------------------------------------------------------
