@@ -198,22 +198,20 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     BooleanFilter bf = new BooleanFilter();
     
     // Add a clause for each token.  This will be added directly to the main filter (as a deny test), as well as to an OR's subclause (as an allow test).
-    BooleanFilter orFilter = new BooleanFilter();
     // Add the empty-acl case
     BooleanFilter subUnprotectedClause = new BooleanFilter();
     subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(allowField,"*"))),BooleanClause.Occur.MUST_NOT));
     subUnprotectedClause.add(new FilterClause(new QueryWrapperFilter(new WildcardQuery(new Term(denyField,"*"))),BooleanClause.Occur.MUST_NOT));
-    orFilter.add(new FilterClause(subUnprotectedClause,BooleanClause.Occur.SHOULD));
+    bf.add(new FilterClause(subUnprotectedClause,BooleanClause.Occur.SHOULD));
     for (String accessToken : userAccessTokens)
     {
       TermsFilter tf = new TermsFilter();
       tf.addTerm(new Term(allowField,accessToken));
-      orFilter.add(new FilterClause(tf,BooleanClause.Occur.SHOULD));
+      bf.add(new FilterClause(tf,BooleanClause.Occur.SHOULD));
       tf = new TermsFilter();
       tf.addTerm(new Term(denyField,accessToken));
       bf.add(new FilterClause(tf,BooleanClause.Occur.MUST_NOT));
     }
-    bf.add(new FilterClause(orFilter,BooleanClause.Occur.MUST));
     return bf;
   }
   
