@@ -31,7 +31,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-public class ManifoldCFSecurityFilterTest extends SolrTestCaseJ4 {
+public class ManifoldCFSearchComponentTest extends SolrTestCaseJ4 {
   
   static MockMCFAuthorityService service;
 
@@ -71,7 +71,7 @@ public class ManifoldCFSecurityFilterTest extends SolrTestCaseJ4 {
   
   @Test
   public void testParameters() throws Exception {
-    ManifoldCFSecurityFilter mcfFilter = (ManifoldCFSecurityFilter)h.getCore().getSearchComponent("mcf-param");
+    ManifoldCFSearchComponent mcfFilter = (ManifoldCFSearchComponent)h.getCore().getSearchComponent("mcf-param");
     assertEquals("http://localhost:8345/mcf-as", mcfFilter.authorityBaseURL);
     assertEquals(3000, mcfFilter.socketTimeOut);
     assertEquals("aap-document", mcfFilter.fieldAllowDocument);

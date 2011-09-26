@@ -38,7 +38,7 @@ import java.net.*;
 * SearchComponent plugin for ManifoldCF-specific document-level access control.
 * Configuration is under the SolrACLSecurity name.
 */
-public class ManifoldCFSecurityFilter extends SearchComponent
+public class ManifoldCFSearchComponent extends SearchComponent
 {
   /** The component name */
   static final public String COMPONENT_NAME = "mcf";
@@ -66,7 +66,7 @@ public class ManifoldCFSecurityFilter extends SearchComponent
   String fieldDenyShare = null;
   int socketTimeOut;
   
-  public ManifoldCFSecurityFilter()
+  public ManifoldCFSearchComponent()
   {
     super();
   }

@@ -31,7 +31,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-public class ManifoldCFLoadTest extends SolrTestCaseJ4 {
+public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
   
   static MockMCFAuthorityService service;
 
