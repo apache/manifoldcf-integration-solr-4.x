@@ -1,13 +1,14 @@
-Apache Solr ManifoldCFSecurityFilter Library
+Apache Solr ManifoldCF security Library
 		Release Notes
 
-This file describes changes to the Solr ManifoldCFSecurityFilter (contrib/auth) module. See SOLR-1895 for details.
+This file describes changes to the Solr ManifoldCF security package (contrib/auth) module. See SOLR-1895 for details.
 
 Introduction
 ------------
 This module is intended to be used to restrict queries based on a user's authorization information.
-It includes a SearchComponent class org.apache.solr.auth.ManifoldCFSecurityFilter.  This search
-component requires the argument "AuthorityServiceBaseURL", which describes the URL needed to reach
+It includes a SearchComponent class org.apache.solr.mcf.ManifoldCFSearchComponent.  It also includes
+a Query Parser plugin class org.apache.solr.mcf.ManifoldCFQParserPlugin.  Both components
+require the argument "AuthorityServiceBaseURL", which describes the URL needed to reach
 the ManifoldCF Authority Service.  Other optional parameters are:
 
 AllowAttributePrefix - the first part of the 'allow' family of fields, e.g. "allow_token_document" or
