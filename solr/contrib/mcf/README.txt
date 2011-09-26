@@ -7,10 +7,10 @@ Then, you will need to add fields to your Solr schema.xml file that can be used 
 authorization information.  There will need to be four of these fields, an 'allow' field for both
 documents and shares, and a 'deny' field for both documents and shares.  For example:
 
-  <field name="allow_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
-  <field name="allow_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
-  <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
-  <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false"/>
+  <field name="allow_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="allow_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
 
 Next, modify your solrconfig.xml to add the search component:
 

@@ -49,6 +49,9 @@ public class ManifoldCFSecurityFilter extends SearchComponent
    * running under Apache */
   static final public String USER_TOKENS = "UserTokens";
   
+  /** Special token for null security fields */
+  static final public String NOSECURITY_TOKEN = "__nosecurity__";
+  
   /** The queries that we will not attempt to interfere with */
   static final private String[] globalAllowed = { "solrpingquery" };
   
@@ -153,10 +156,10 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     BooleanQuery bq = new BooleanQuery();
     //bf.setMaxClauseCount(100000);
     
-    Query allowShareOpen = new WildcardQuery(new Term(fieldAllowShare,"*"));
-    Query denyShareOpen = new WildcardQuery(new Term(fieldDenyShare,"*"));
-    Query allowDocumentOpen = new WildcardQuery(new Term(fieldAllowDocument,"*"));
-    Query denyDocumentOpen = new WildcardQuery(new Term(fieldDenyDocument,"*"));
+    Query allowShareOpen = new TermQuery(new Term(fieldAllowShare,NOSECURITY_TOKEN));
+    Query denyShareOpen = new WildcardQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
+    Query allowDocumentOpen = new WildcardQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
+    Query denyDocumentOpen = new WildcardQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
     
     if (userAccessTokens.size() == 0)
     {
@@ -165,11 +168,10 @@ public class ManifoldCFSecurityFilter extends SearchComponent
       // (fieldAllowShare is empty AND fieldDenyShare is empty AND fieldAllowDocument is empty AND fieldDenyDocument is empty)
       // We're trying to map to:  -(fieldAllowShare:*) , which should be pretty efficient in Solr because it is negated.  If this turns out not to be so, then we should
       // have the SolrConnector inject a special token into these fields when they otherwise would be empty, and we can trivially match on that token.
-      bq.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
-      bq.add(allowShareOpen,BooleanClause.Occur.MUST_NOT);
-      bq.add(denyShareOpen,BooleanClause.Occur.MUST_NOT);
-      bq.add(allowDocumentOpen,BooleanClause.Occur.MUST_NOT);
-      bq.add(denyDocumentOpen,BooleanClause.Occur.MUST_NOT);
+      bq.add(allowShareOpen,BooleanClause.Occur.MUST);
+      bq.add(denyShareOpen,BooleanClause.Occur.MUST);
+      bq.add(allowDocumentOpen,BooleanClause.Occur.MUST);
+      bq.add(denyDocumentOpen,BooleanClause.Occur.MUST);
     }
     else
     {
@@ -208,8 +210,8 @@ public class ManifoldCFSecurityFilter extends SearchComponent
     // Add the empty-acl case
     BooleanQuery subUnprotectedClause = new BooleanQuery();
     subUnprotectedClause.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
-    subUnprotectedClause.add(allowOpen,BooleanClause.Occur.MUST_NOT);
-    subUnprotectedClause.add(denyOpen,BooleanClause.Occur.MUST_NOT);
+    subUnprotectedClause.add(allowOpen,BooleanClause.Occur.MUST);
+    subUnprotectedClause.add(denyOpen,BooleanClause.Occur.MUST);
     bq.add(subUnprotectedClause,BooleanClause.Occur.SHOULD);
     for (String accessToken : userAccessTokens)
     {
