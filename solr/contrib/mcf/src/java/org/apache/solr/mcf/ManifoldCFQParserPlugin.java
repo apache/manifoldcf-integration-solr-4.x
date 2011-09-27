@@ -210,7 +210,6 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
       
       // Add the empty-acl case
       BooleanQuery subUnprotectedClause = new BooleanQuery();
-      subUnprotectedClause.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
       subUnprotectedClause.add(allowOpen,BooleanClause.Occur.MUST);
       subUnprotectedClause.add(denyOpen,BooleanClause.Occur.MUST);
       bq.add(subUnprotectedClause,BooleanClause.Occur.SHOULD);

@@ -56,7 +56,7 @@ public class ManifoldCFSearchComponent extends SearchComponent
   static final private String[] globalAllowed = { "solrpingquery" };
   
   /** A logger we can use */
-  private static final Logger LOG = LoggerFactory.getLogger(ManifoldCFSecurityFilter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ManifoldCFSearchComponent.class);
 
   // Member variables
   String authorityBaseURL = null;
@@ -209,7 +209,6 @@ public class ManifoldCFSearchComponent extends SearchComponent
     
     // Add the empty-acl case
     BooleanQuery subUnprotectedClause = new BooleanQuery();
-    subUnprotectedClause.add(new MatchAllDocsQuery(),BooleanClause.Occur.SHOULD);
     subUnprotectedClause.add(allowOpen,BooleanClause.Occur.MUST);
     subUnprotectedClause.add(denyOpen,BooleanClause.Occur.MUST);
     bq.add(subUnprotectedClause,BooleanClause.Occur.SHOULD);
