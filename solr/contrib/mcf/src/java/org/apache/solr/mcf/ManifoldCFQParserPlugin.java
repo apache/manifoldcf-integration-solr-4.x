@@ -171,9 +171,9 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
       //bf.setMaxClauseCount(100000);
       
       Query allowShareOpen = new TermQuery(new Term(fieldAllowShare,NOSECURITY_TOKEN));
-      Query denyShareOpen = new WildcardQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
-      Query allowDocumentOpen = new WildcardQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
-      Query denyDocumentOpen = new WildcardQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
+      Query denyShareOpen = new TermQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
+      Query allowDocumentOpen = new TermQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
+      Query denyDocumentOpen = new TermQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
       
       if (userAccessTokens.size() == 0)
       {

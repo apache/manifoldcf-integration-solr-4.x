@@ -1,7 +1,7 @@
 Apache Solr ManifoldCF security Library
 		Release Notes
 
-This file describes changes to the Solr ManifoldCF security package (contrib/auth) module. See SOLR-1895 for details.
+This file describes changes to the Solr ManifoldCF security package (contrib/mcf) module.
 
 Introduction
 ------------

@@ -96,9 +96,9 @@ public class ManifoldCFSearchComponent extends SearchComponent
   public void prepare(ResponseBuilder rb) throws IOException
   {
     SolrParams params = rb.req.getParams();
-    if (!params.getBool(COMPONENT_NAME, true) || params.getBool(ShardParams.IS_SHARD, false))
+    if (!params.getBool(COMPONENT_NAME, true) || params.get(ShardParams.SHARDS) != null)
       return;
-
+    
     // Log that we got here
     //LOG.info("prepare() entry params:\n" + params + "\ncontext: " + rb.req.getContext());
 		
@@ -157,9 +157,9 @@ public class ManifoldCFSearchComponent extends SearchComponent
     //bf.setMaxClauseCount(100000);
     
     Query allowShareOpen = new TermQuery(new Term(fieldAllowShare,NOSECURITY_TOKEN));
-    Query denyShareOpen = new WildcardQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
-    Query allowDocumentOpen = new WildcardQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
-    Query denyDocumentOpen = new WildcardQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
+    Query denyShareOpen = new TermQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
+    Query allowDocumentOpen = new TermQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
+    Query denyDocumentOpen = new TermQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
     
     if (userAccessTokens.size() == 0)
     {
