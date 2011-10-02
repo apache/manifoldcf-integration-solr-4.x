@@ -1,0 +1,11 @@
+Apache Solr-4.x ManifoldCF Plugin requires
+----------------------------------------
+* JRE 1.6 or above
+* svn command line tools
+
+For building Apache Solr-4.x ManifoldCF Plugin:
+--------------------------------------------
+
+* Look at README.txt
+
+

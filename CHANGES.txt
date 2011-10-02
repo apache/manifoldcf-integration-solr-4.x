@@ -1,0 +1,5 @@
+Apache Solr 4.x ManifoldCF Plugin change Log
+$Id$
+
+======================= 0.1-dev =====================
+

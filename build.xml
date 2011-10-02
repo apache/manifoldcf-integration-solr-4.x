@@ -1,117 +1,120 @@
-<?xml version="1.0"?>
-
 <!--
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
- 
-        http://www.apache.org/licenses/LICENSE-2.0
- 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- -->
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
 
-<project name="lucene-solr" default="test" basedir=".">
-  <target name="test" description="Test both Lucene and Solr" depends="validate">
-    <sequential>
-      <subant target="test" inheritall="false" failonerror="true">
-        <fileset dir="lucene" includes="build.xml" />
-        <fileset dir="modules" includes="build.xml" />
-        <fileset dir="solr" includes="build.xml" />
-      </subant>
-    </sequential>
-  </target>
-  <target name="validate" description="Validate dependencies, licenses, etc.">
-    <sequential><subant target="validate" inheritall="false" failonerror="true">
-        <fileset dir="lucene" includes="build.xml" />
-        <fileset dir="modules" includes="build.xml" />
-        <fileset dir="solr" includes="build.xml" />
-      </subant></sequential>
-  </target>
-  <target name="compile" description="Compile Lucene and Solr">
-    <sequential>
+     http://www.apache.org/licenses/LICENSE-2.0
 
-      <subant target="compile" inheritall="false" failonerror="true">
-        <fileset dir="lucene" includes="build.xml" />
-        <fileset dir="modules" includes="build.xml" />
-        <fileset dir="solr" includes="build.xml" />
-      </subant>
-    </sequential>
-  </target>
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
 
-  <property name="version" value="4.0-SNAPSHOT"/>
-  <target name="get-maven-poms" 
-          description="Copy Maven POMs from dev-tools/maven/ to their target locations">
-    <copy todir="." overwrite="true">
-      <fileset dir="${basedir}/dev-tools/maven"/>
-      <filterset begintoken="@" endtoken="@">
-        <filter token="version" value="${version}"/>
-      </filterset>
-      <globmapper from="*.template" to="*"/>
+<project name="mcf-solr-4.x-plugin" default="help">
+
+  <target name="clean">
+    <delete dir="solr"/>
+    <delete dir="dist"/>
+  </target>
+  
+  <target name="download-solr">
+    <mkdir dir="solr" />
+    <exec dir="solr" executable="svn" failifexecutionfails="true">
+      <arg value="checkout" />
+      <arg value="http://svn.apache.org/repos/asf/lucene/dev/trunk" />
+      <arg value="." />
+    </exec>
+  </target>
+  
+  <target name="copy-sources" depends="download-solr">
+    <mkdir dir="solr/solr/contrib/mcf"/>
+    <copy todir="solr/solr/contrib/mcf">
+      <fileset dir="mcf">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile" depends="copy-sources">
+    <ant dir="solr/solr/contrib/mcf" target="default"/>
+  </target>
+  
+  <target name="test" depends="copy-sources">
+    <ant dir="solr/solr/contrib/mcf" target="test"/>
+  </target>
+  
+  <target name="deliver" depends="compile">
+    <mkdir dir="dist"/>
+    <copy todir="dist">
+      <fileset dir="solr/solr/build/contrib/solr-mcf">
+        <include name="*.jar"/>
+      </fileset>
     </copy>
   </target>
 
-  <target name="generate-maven-artifacts" description="Generate Maven Artifacts for Lucene and Solr">
-    <property name="maven.dist.dir"  location="dist/maven" />
-    <mkdir dir="${maven.dist.dir}" />
+  <target name="build" depends="deliver"/>
 
-    <sequential>
-      <subant target="generate-maven-artifacts" inheritall="false" failonerror="true">
-        <property name="maven.dist.dir"  location="${maven.dist.dir}" />
-        <fileset dir="lucene" includes="build.xml" />
-        <fileset dir="modules" includes="build.xml" />
-        <fileset dir="solr" includes="build.xml" />
-      </subant>
-    </sequential>
+  <target name="set-version">
+      <property name="release-version" value="0.1-incubating-dev"/>
+  </target>
+    
+  <target name="create-source-zip" depends="set-version">
+      <zip destfile="apache-solr-4.x-manifoldcf-plugin-${release-version}-src.zip" update="false">
+        <zipfileset dir="." prefix="apache-solr-4.x-manifoldcf-plugin-${release-version}">
+          <exclude name="/solr/"/>
+          <exclude name="/dist/"/>
+          <exclude name="/apache-solr-4.x-manifoldcf-plugin-*"/>
+        </zipfileset>
+      </zip>
+    </target>
+    
+  <target name="create-source-tar" depends="set-version">
+      <tar destfile="apache-solr-4.x-manifoldcf-plugin-${release-version}-src.tar.gz" compression="gzip" longfile="gnu">
+        <tarfileset dir="." prefix="apache-solr-4.x-manifoldcf-plugin-${release-version}">
+          <exclude name="/solr/"/>
+          <exclude name="/dist/"/>
+          <exclude name="/apache-solr-4.x-manifoldcf-plugin-*"/>
+        </tarfileset>
+      </tar>
   </target>
 
-  <target name="eclipse" description="Setup Eclipse configuration">
-    <copy file="dev-tools/eclipse/dot.project" tofile=".project" overwrite="false"/>
-    <copy file="dev-tools/eclipse/dot.classpath" tofile=".classpath" overwrite="true"/>
-    <mkdir dir=".settings"/>
-    <copy file="dev-tools/eclipse/resources.prefs" 
-          tofile=".settings/org.eclipse.core.resources.prefs" overwrite="true"/>
-    <echo>
-      SUCCESS: You must right-click your project and choose Refresh
-      Please note, your project must use a Java 6 JRE
+  <target name="help">
+    <echo level="info">
+Apache Solr 4.x ManifoldCF Plugin build file.  Use this file to
+build the plugin distributables and run the tests.
+
+Useful targets are:
+
+clean   - Clean the build area
+build   - Build jar under the 'dist' directory
+test    - Run the tests
+
+Prerequisites: This build requires Subversion (svn) to be
+installed, and svn internet access to the Apache repository.
+It also requires Java jdk1.6.0 or above.
     </echo>
   </target>
-
-  <target name="idea" description="Setup IntelliJ IDEA configuration">
-    <copy todir=".">
-      <fileset dir="dev-tools/idea"/>
-    </copy>
-    <echo>
-      To complete IntelliJ IDEA setup, you must manually configure
-      Project Structure | Project | Project SDK.
-    </echo>
+  
+  <target name="-taskdef">
+      <typedef resource="org/apache/rat/anttasks/antlib.xml" uri="antlib:rat.anttasks">
+        <classpath>
+          <fileset dir="." includes="rat*.jar"/>
+        </classpath>
+      </typedef>
   </target>
-  <target name="clean-idea"
-          description="Removes all IntelliJ IDEA configuration files">
-    <delete dir=".idea" failonerror="true"/>
-    <delete failonerror="true">
-      <fileset dir="." includes="*.iml,*.ipr,*.iws"/>
-      <fileset dir="solr" includes="**/*.iml"/>
-      <fileset dir="lucene" includes="**/*.iml"/>
-      <fileset dir="modules" includes="**/*.iml"/>
-    </delete>
-  </target>
-
-  <target name="clean" description="Clean Lucene and Solr">
-    <delete dir="dist" />
-    <sequential>
-      <subant target="clean" inheritall="false" failonerror="true">
-        <fileset dir="lucene" includes="build.xml" />
-        <fileset dir="modules" includes="build.xml" />
-        <fileset dir="solr" includes="build.xml" />
-      </subant>
-    </sequential>
+  <target name="rat-sources" depends="-taskdef"
+      description="runs the tasks over src/java excluding the license directory">
+      <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+        <fileset dir="src/">
+          <exclude name="solr/"/>
+          <exclude name="dist/"/>
+        </fileset>
+      </rat:report>
   </target>
 
 </project>
