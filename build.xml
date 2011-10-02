@@ -83,6 +83,8 @@
       </tar>
   </target>
 
+  <target name="image" depends="create-source-zip,create-source-tar"/>
+
   <target name="help">
     <echo level="info">
 Apache Solr 4.x ManifoldCF Plugin build file.  Use this file to
@@ -93,6 +95,7 @@ Useful targets are:
 clean   - Clean the build area
 build   - Build jar under the 'dist' directory
 test    - Run the tests
+image - Package the sources
 
 Prerequisites: This build requires Subversion (svn) to be
 installed, and svn internet access to the Apache repository.
@@ -110,9 +113,8 @@ It also requires Java jdk1.6.0 or above.
   <target name="rat-sources" depends="-taskdef"
       description="runs the tasks over src/java excluding the license directory">
       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
-        <fileset dir="src/">
-          <exclude name="solr/"/>
-          <exclude name="dist/"/>
+        <fileset dir="mcf/">
+          <exclude name="CHANGES.txt"/>
         </fileset>
       </rat:report>
   </target>
