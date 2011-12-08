@@ -67,6 +67,7 @@ public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
       i++;
     }
     assertU(commit());
+    assertU(optimize());
   }
 
   @AfterClass
