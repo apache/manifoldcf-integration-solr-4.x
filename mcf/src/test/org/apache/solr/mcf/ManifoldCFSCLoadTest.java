@@ -66,8 +66,8 @@ public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
       assertU(adoc("id", "notoken-"+i));
       i++;
     }
-    assertU(commit());
     assertU(optimize());
+    assertU(commit());
   }
 
   @AfterClass
