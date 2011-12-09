@@ -18,6 +18,10 @@
 <project name="mcf-solr-4.x-plugin" default="help">
 
   <target name="clean">
+    <delete>
+      <fileset dir="." includes="apache-manifoldcf-solr-4.x-plugin-*.zip"/>
+      <fileset dir="." includes="apache-manifoldcf-solr-4.x-plugin-*.tar.gz"/>
+    </delete>
     <delete dir="solr"/>
     <delete dir="dist"/>
   </target>
@@ -60,25 +64,25 @@
   <target name="build" depends="deliver"/>
 
   <target name="set-version">
-      <property name="release-version" value="0.1-incubating-dev"/>
+      <property name="release-version" value="0.1-incubating"/>
   </target>
     
   <target name="create-source-zip" depends="set-version">
-      <zip destfile="apache-solr-4.x-manifoldcf-plugin-${release-version}-src.zip" update="false">
-        <zipfileset dir="." prefix="apache-solr-4.x-manifoldcf-plugin-${release-version}">
+      <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.zip" update="false">
+        <zipfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
-          <exclude name="/apache-solr-4.x-manifoldcf-plugin-*"/>
+          <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
         </zipfileset>
       </zip>
     </target>
     
   <target name="create-source-tar" depends="set-version">
-      <tar destfile="apache-solr-4.x-manifoldcf-plugin-${release-version}-src.tar.gz" compression="gzip" longfile="gnu">
-        <tarfileset dir="." prefix="apache-solr-4.x-manifoldcf-plugin-${release-version}">
+      <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.tar.gz" compression="gzip" longfile="gnu">
+        <tarfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
-          <exclude name="/apache-solr-4.x-manifoldcf-plugin-*"/>
+          <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
         </tarfileset>
       </tar>
   </target>
@@ -87,7 +91,7 @@
 
   <target name="help">
     <echo level="info">
-Apache Solr 4.x ManifoldCF Plugin build file.  Use this file to
+Apache ManifoldCF Solr 4.x Plugin build file.  Use this file to
 build the plugin distributables and run the tests.
 
 Useful targets are:

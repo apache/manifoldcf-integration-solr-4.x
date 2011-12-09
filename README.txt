@@ -14,7 +14,7 @@
 # limitations under the License.
 
 
-Instructions for Building Apache Solr 4.x ManifoldCF Plugin from Source
+Instructions for Building Apache ManifoldCF Solr 4.x Plugin from Source
 -------------------------------------------------------------------
 
 1. Download the Java SE 6 JDK (Java Development Kit), or greater, from http://java.sun.com.
@@ -31,16 +31,16 @@ Instructions for Building Apache Solr 4.x ManifoldCF Plugin from Source
    build.xml file), and type "ant" for directions.
 
 
-Some Files Included In Apache Solr 4.x ManifoldCF Plugin Distributions
+Some Files Included In Apache ManifoldCF Solr 4.x Plugin Distributions
 ------------------------------------------------------------------
 
 dist/apache-solr-mcf*.jar
-  The Apache Solr 4.x ManifoldCF plugin jar.
+  The Apache ManifoldCF Solr 4.x Plugin jar.
 
 Licensing
 ---------
 
-Apache Solr-4.x ManifoldCF Plugin is licensed under the
+Apache ManifoldCF Solr-4.x Plugin is licensed under the
 Apache License 2.0. See the files called LICENSE.txt and NOTICE.txt
 for more information.
 
@@ -69,7 +69,7 @@ code and source code.
 The following provides more details on the included software that
 may be subject to export controls on cryptographic software:
 
-  The ManifoldCF plugin for Apache Solr 4.x does not include any
+  The Apache ManifoldCF Solr 4.x Plugin does not include any
   implementation or usage of cryptographic software at this time.
   
 Contact
