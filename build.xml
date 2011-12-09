@@ -20,7 +20,6 @@
   <target name="clean">
     <delete>
       <fileset dir="." includes="apache-manifoldcf-solr-4.x-plugin-*"/>
-      <fileset dir="." includes="apache-manifoldcf-solr-4.x-plugin-*"/>
     </delete>
     <delete dir="solr"/>
     <delete dir="dist"/>
