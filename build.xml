@@ -86,7 +86,29 @@
       </tar>
   </target>
 
-  <target name="image" depends="create-source-zip,create-source-tar"/>
+  <target name="create-bin-zip" depends="build,set-version">
+      <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.zip" update="false">
+        <zipfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
+          <exclude name="/solr/"/>
+          <exclude name="/mcf/"/>
+          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
+          <exclude name="build.xml"/>
+        </zipfileset>
+      </zip>
+    </target>
+    
+  <target name="create-bin-tar" depends="build,set-version">
+      <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.tar.gz" compression="gzip" longfile="gnu">
+        <tarfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
+          <exclude name="/solr/"/>
+          <exclude name="/mcf/"/>
+          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
+          <exclude name="build.xml"/>
+        </tarfileset>
+      </tar>
+  </target>
+
+  <target name="image" depends="create-source-zip,create-source-tar,create-bin-zip,create-bin-tar"/>
 
   <target name="help">
     <echo level="info">
@@ -98,7 +120,7 @@ Useful targets are:
 clean   - Clean the build area
 build   - Build jar under the 'dist' directory
 test    - Run the tests
-image - Package the sources
+image - Package the sources and binaries
 
 Prerequisites: This build requires Subversion (svn) to be
 installed, and svn internet access to the Apache repository.
