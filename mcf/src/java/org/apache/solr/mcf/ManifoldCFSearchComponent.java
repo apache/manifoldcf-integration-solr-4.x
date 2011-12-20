@@ -28,6 +28,7 @@ import org.apache.solr.handler.component.ResponseBuilder;
 import org.apache.solr.handler.component.SearchComponent;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.params.*;
 import org.slf4j.*;
 
 import java.io.*;
@@ -65,10 +66,26 @@ public class ManifoldCFSearchComponent extends SearchComponent
   String fieldAllowShare = null;
   String fieldDenyShare = null;
   int socketTimeOut;
+  MultiThreadedHttpConnectionManager httpConnectionManager;
+  HttpClient client;
   
   public ManifoldCFSearchComponent()
   {
     super();
+    HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+    params.setTcpNoDelay(true);
+    params.setStaleCheckingEnabled(false);
+    httpConnectionManager = new MultiThreadedHttpConnectionManager();
+    httpConnectionManager.setParams(params);
+    client = new HttpClient(httpConnectionManager);
+  }
+
+  @Override
+  protected void finalize()
+    throws Throwable
+  {
+    super.finalize();
+    httpConnectionManager.shutdown();
   }
 
   @Override
@@ -254,7 +271,6 @@ public class ManifoldCFSearchComponent extends SearchComponent
     throws IOException
   {
     // We can make this more complicated later, with support for https etc., but this is enough to demonstrate how it all should work.
-    HttpClient client = new HttpClient();
     String theURL = authorityBaseURL + "/UserACLs?username="+URLEncoder.encode(authenticatedUserName,"utf-8");
       
     GetMethod method = new GetMethod(theURL);
@@ -271,7 +287,7 @@ public class ManifoldCFSearchComponent extends SearchComponent
       InputStream is = method.getResponseBodyAsStream();
       try
       {
-        Reader r = new InputStreamReader(is,"utf-8");
+        Reader r = new InputStreamReader(is,method.getResponseCharSet());
         try
         {
           BufferedReader br = new BufferedReader(r);

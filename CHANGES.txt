@@ -1,7 +1,13 @@
 Apache ManifoldCF Solr 4.x Plugin change Log
 $Id$
 
-======================= 0.1-dev =====================
+======================= 0.2-incubating-dev =====================
+
+CONNECTORS-333: Use multithreaded connection manager and tcp-no-delay
+in order to avoid sockets accumulating in CLOSE_WAIT.
+(Simon Willnauer via Karl Wright)
+
+======================= Release 0.1 =====================
 
 Initial commit.
 (Karl Wright)
