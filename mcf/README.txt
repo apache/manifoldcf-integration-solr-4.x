@@ -23,6 +23,7 @@ To set up the query parser plugin, modify your solrconfig.xml to add the query p
   <queryParser name="manifoldCFSecurity"
     class="org.apache.solr.mcf.ManifoldCFQParserPlugin">
     <str name="AuthorityServiceBaseURL">http://localhost:8345/mcf-authority-service</str>
+    <int name="ConnectionPoolSize">50</int>
   </queryParser>
 
 Hook up the search component in the solrconfig.xml file wherever you want it, e.g.:
@@ -44,6 +45,7 @@ To set up the search component, modify your solrconfig.xml to add the search com
   <searchComponent name="manifoldCFSecurity"
     class="org.apache.solr.mcf.ManifoldCFSearchComponent">
     <str name="AuthorityServiceBaseURL">http://localhost:8345/mcf-authority-service</str>
+    <int name="ConnectionPoolSize">50</int>
   </searchComponent>
 
 Hook up the search component in the solrconfig.xml file wherever you want it, e.g.:
