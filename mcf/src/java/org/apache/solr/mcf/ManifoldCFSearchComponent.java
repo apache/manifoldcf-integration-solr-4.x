@@ -26,6 +26,9 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.handler.component.ResponseBuilder;
 import org.apache.solr.handler.component.SearchComponent;
+import org.apache.solr.core.CloseHook;
+import org.apache.solr.util.plugin.SolrCoreAware;
+import org.apache.solr.core.SolrCore;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.params.*;
@@ -39,7 +42,7 @@ import java.net.*;
 * SearchComponent plugin for ManifoldCF-specific document-level access control.
 * Configuration is under the SolrACLSecurity name.
 */
-public class ManifoldCFSearchComponent extends SearchComponent
+public class ManifoldCFSearchComponent extends SearchComponent implements SolrCoreAware
 {
   /** The component name */
   static final public String COMPONENT_NAME = "mcf";
@@ -66,26 +69,12 @@ public class ManifoldCFSearchComponent extends SearchComponent
   String fieldAllowShare = null;
   String fieldDenyShare = null;
   int socketTimeOut;
-  MultiThreadedHttpConnectionManager httpConnectionManager;
-  HttpClient client;
+  MultiThreadedHttpConnectionManager httpConnectionManager = null;
+  HttpClient client = null;
   
   public ManifoldCFSearchComponent()
   {
     super();
-    HttpConnectionManagerParams params = new HttpConnectionManagerParams();
-    params.setTcpNoDelay(true);
-    params.setStaleCheckingEnabled(false);
-    httpConnectionManager = new MultiThreadedHttpConnectionManager();
-    httpConnectionManager.setParams(params);
-    client = new HttpClient(httpConnectionManager);
-  }
-
-  @Override
-  protected void finalize()
-    throws Throwable
-  {
-    super.finalize();
-    httpConnectionManager.shutdown();
   }
 
   @Override
@@ -107,6 +96,16 @@ public class ManifoldCFSearchComponent extends SearchComponent
     fieldDenyDocument = denyAttributePrefix+"document";
     fieldAllowShare = allowAttributePrefix+"share";
     fieldDenyShare = denyAttributePrefix+"share";
+    
+    // Initialize the connection pool
+    HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+    params.setTcpNoDelay(true);
+    params.setStaleCheckingEnabled(false);
+    httpConnectionManager = new MultiThreadedHttpConnectionManager();
+    httpConnectionManager.setParams(params);
+    // MHL to set the pool size
+    client = new HttpClient(httpConnectionManager);
+
   }
 
   @Override
@@ -263,7 +262,12 @@ public class ManifoldCFSearchComponent extends SearchComponent
   {
     return "$URL$";
   }
-	
+
+  public void inform(SolrCore core)
+  {
+    core.addCloseHook(new CloseHandler());
+  }
+  
   // Protected methods
   
   /** Get access tokens given a username */
@@ -331,6 +335,33 @@ public class ManifoldCFSearchComponent extends SearchComponent
     {
       method.releaseConnection();
     }
+  }
+  
+  /** CloseHook implementation.
+  */
+  protected class CloseHandler extends CloseHook
+  {
+    public CloseHandler()
+    {
+    }
+    
+    @Override
+    public void preClose(SolrCore core)
+    {
+    }
+    
+    @Override
+    public void postClose(SolrCore core)
+    {
+      // Close the connection pool
+      if (httpConnectionManager != null)
+      {
+        httpConnectionManager.shutdown();
+        httpConnectionManager = null;
+        client = null;
+      }
+    }
+    
   }
   
 }
