@@ -79,6 +79,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
   int socketTimeOut;
   MultiThreadedHttpConnectionManager httpConnectionManager = null;
   HttpClient client = null;
+  int poolSize;
   
   public ManifoldCFQParserPlugin()
   {
@@ -103,14 +104,17 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
     fieldDenyDocument = denyAttributePrefix+"document";
     fieldAllowShare = allowAttributePrefix+"share";
     fieldDenyShare = denyAttributePrefix+"share";
+    Integer connectionPoolSize = (Integer)args.get("ConnectionPoolSize");
+    poolSize = (connectionPoolSize==null)?50:connectionPoolSize.intValue();
 
     // Initialize the connection pool
     HttpConnectionManagerParams params = new HttpConnectionManagerParams();
     params.setTcpNoDelay(true);
     params.setStaleCheckingEnabled(false);
+    params.setDefaultMaxConnectionsPerHost(poolSize);
+    params.setMaxTotalConnections(poolSize);
     httpConnectionManager = new MultiThreadedHttpConnectionManager();
     httpConnectionManager.setParams(params);
-    // MHL to set the pool size
     client = new HttpClient(httpConnectionManager);
   }
 

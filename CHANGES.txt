@@ -3,6 +3,10 @@ $Id$
 
 ======================= 0.2-incubating-dev =====================
 
+CONNECTORS-354: Add a parameter to allow the maximum connection pool
+size to be configurated in solrconfig.xml.
+(Karl Wright)
+
 CONNECTORS-333: Use multithreaded connection manager and tcp-no-delay
 in order to avoid sockets accumulating in CLOSE_WAIT.
 (Simon Willnauer via Karl Wright)
