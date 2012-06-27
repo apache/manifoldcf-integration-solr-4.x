@@ -159,7 +159,7 @@ public class ManifoldCFSearchComponentTest extends SolrTestCaseJ4 {
       ContextHandlerCollection contexts = new ContextHandlerCollection();
       server.setHandler(contexts);
 
-      ServletContextHandler asContext = new ServletContextHandler(contexts,"/mcf-as",ServletContextHandler.SESSIONS);
+      ServletContextHandler asContext = new ServletContextHandler(contexts,"/mcf-authority-service",ServletContextHandler.SESSIONS);
       asContext.addServlet(new ServletHolder(new UserACLServlet()), "/UserACLs");
       contexts.addHandler(asContext);
     }

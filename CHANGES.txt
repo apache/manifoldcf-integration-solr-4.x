@@ -3,6 +3,9 @@ $Id$
 
 ======================= 0.2-incubating-dev =====================
 
+CONNECTORS-485: Port to the latest 4.x code.
+(Karl Wright)
+
 CONNECTORS-354: Add a parameter to allow the maximum connection pool
 size to be configurated in solrconfig.xml.
 (Karl Wright)
