@@ -27,9 +27,12 @@ import org.apache.solr.SolrTestCaseJ4;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.ServletHolder;
+
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 
 public class ManifoldCFQParserPluginTest extends SolrTestCaseJ4 {
   
@@ -142,8 +145,12 @@ public class ManifoldCFQParserPluginTest extends SolrTestCaseJ4 {
     
     public MockMCFAuthorityService() {
       server = new Server(8347);
-      Context asContext = new Context(server,"/mcf-as",Context.SESSIONS);
+      ContextHandlerCollection contexts = new ContextHandlerCollection();
+      server.setHandler(contexts);
+
+      ServletContextHandler asContext = new ServletContextHandler(contexts,"/mcf-as",ServletContextHandler.SESSIONS);
       asContext.addServlet(new ServletHolder(new UserACLServlet()), "/UserACLs");
+      contexts.addHandler(asContext);
     }
     
     public void start() throws Exception {

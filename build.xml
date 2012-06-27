@@ -27,9 +27,9 @@
   
   <target name="download-solr">
     <mkdir dir="solr" />
-    <exec dir="solr" executable="svn" failifexecutionfails="true">
+    <exec dir="solr" executable="svn" failifexecutionfails="true" failonerror="true">
       <arg value="checkout" />
-      <arg value="http://svn.apache.org/repos/asf/lucene/dev/trunk" />
+      <arg value="http://svn.apache.org/repos/asf/lucene/dev/branches/branch_4x/" />
       <arg value="." />
     </exec>
   </target>

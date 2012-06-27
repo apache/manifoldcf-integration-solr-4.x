@@ -22,12 +22,15 @@ Instructions for Building Apache ManifoldCF Solr 4.x Plugin from Source
    on your command path.  To test this, issue a "java -version" command from your
    shell and verify that the Java version is 1.6 or greater.
 
-2. Download the Apache Ant binary distribution (1.7.0 or greater) from http://ant.apache.org.
+2. Download the Apache Ant binary distribution (1.8.2 or greater) from http://ant.apache.org.
    You will need Ant installed and the %ANT_HOME%\bin directory included on your
    command path.  To test this, issue a "ant -version" command from your
    shell and verify that Ant is available.
 
-3. In a shell, change to the root directory of the source (where you find the outermost
+3. Download the Apache Ivy binary distribution (2.2.0 or greater) from http://ant.apache.org/ivy.
+    Copy the ivy jar into the ant lib area into the %ANT_HOME%\lib directory.
+    
+4. In a shell, change to the root directory of the source (where you find the outermost
    build.xml file), and type "ant" for directions.
 
 
