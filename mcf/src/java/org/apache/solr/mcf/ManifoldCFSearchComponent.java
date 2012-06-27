@@ -94,7 +94,10 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     super.init(args);
     authorityBaseURL = (String)args.get("AuthorityServiceBaseURL");
     if (authorityBaseURL == null)
+    {
+      System.out.println("USING DEFAULT BASE URL!!");
       authorityBaseURL = "http://localhost:8345/mcf-authority-service";
+    }
     Integer timeOut = (Integer)args.get("SocketTimeOut");
     socketTimeOut = timeOut == null ? 300000 : timeOut;
     String allowAttributePrefix = (String)args.get("AllowAttributePrefix");
@@ -304,7 +307,10 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       InputStream is = httpResponse.getEntity().getContent();
       try
       {
-        Reader r = new InputStreamReader(is,EntityUtils.getContentCharSet(httpResponse.getEntity()));
+        String charSet = EntityUtils.getContentCharSet(httpResponse.getEntity());
+        if (charSet == null)
+          charSet = "utf-8";
+        Reader r = new InputStreamReader(is,charSet);
         try
         {
           BufferedReader br = new BufferedReader(r);

@@ -285,7 +285,10 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         InputStream is = httpResponse.getEntity().getContent();
         try
         {
-          Reader r = new InputStreamReader(is,EntityUtils.getContentCharSet(httpResponse.getEntity()));
+          String charSet = EntityUtils.getContentCharSet(httpResponse.getEntity());
+          if (charSet == null)
+            charSet = "utf-8";
+          Reader r = new InputStreamReader(is,charSet);
           try
           {
             BufferedReader br = new BufferedReader(r);
