@@ -79,5 +79,5 @@ Contact
 -------
 
   o For general information visit the main project site at
-    http://incubator.apache.org/connectors
+    http://manifoldcf.apache.org
 
