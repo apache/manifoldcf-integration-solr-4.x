@@ -57,6 +57,9 @@
       <fileset dir="solr/solr/build/contrib/solr-mcf">
         <include name="*.jar"/>
       </fileset>
+      <fileset dir="mcf">
+        <include name="README.txt"/>
+      </fileset>
     </copy>
   </target>
 
