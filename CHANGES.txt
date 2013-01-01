@@ -5,6 +5,10 @@ $Id$
 
 ======================= Release 0.3 =====================
 
+CONNECTORS-595: Fix tests to use new initCore() conventions and
+test resource layout.
+(Karl Wright)
+
 Port to final release of Solr 4.0.0.
 (Karl Wright)
 
