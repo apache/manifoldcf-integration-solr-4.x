@@ -40,7 +40,7 @@ public class ManifoldCFQParserPluginTest extends SolrTestCaseJ4 {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    initCore("solrconfig-auth-qparser.xml","schema-auth.xml");
+    initCore("solrconfig-auth-qparser.xml","schema-auth.xml",getFile("solr-mcf/solr").getAbsolutePath());
     service = new MockMCFAuthorityService();
     service.start();
 
