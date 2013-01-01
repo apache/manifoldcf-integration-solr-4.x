@@ -1,7 +1,7 @@
 Apache ManifoldCF Solr 4.x Plugin change Log
 $Id$
 
-======================= 0.3-dev =====================
+======================= Release 0.3 =====================
 
 Port to final release of Solr 4.0.0.
 (Karl Wright)
