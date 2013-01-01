@@ -1,7 +1,12 @@
 Apache ManifoldCF Solr 4.x Plugin change Log
 $Id$
 
-======================= 0.2-incubating-dev =====================
+======================= 0.3-dev =====================
+
+Port to final release of Solr 4.0.0.
+(Karl Wright)
+
+======================= Release 0.2 =====================
 
 CONNECTORS-485: Port to the latest 4.x code.
 (Karl Wright)
