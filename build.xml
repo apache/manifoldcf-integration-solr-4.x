@@ -29,7 +29,7 @@
     <mkdir dir="solr" />
     <exec dir="solr" executable="svn" failifexecutionfails="true" failonerror="true">
       <arg value="checkout" />
-      <arg value="http://svn.apache.org/repos/asf/lucene/dev/branches/branch_4x/" />
+      <arg value="http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_0_0/" />
       <arg value="." />
     </exec>
   </target>
@@ -66,7 +66,7 @@
   <target name="build" depends="deliver"/>
 
   <target name="set-version">
-      <property name="release-version" value="0.2-dev"/>
+      <property name="release-version" value="0.3-dev"/>
   </target>
     
   <target name="create-source-zip" depends="set-version">
