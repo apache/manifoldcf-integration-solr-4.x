@@ -19,7 +19,6 @@ package org.apache.solr.mcf;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.queries.*;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.solr.search.QParserPlugin;
 import org.apache.solr.search.QParser;
 import org.apache.solr.common.params.CommonParams;
@@ -158,7 +157,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
     /** Create and return the <code>Query</code> object represented by <code>qstr</code>
     * @see #getQuery()
     **/
-    public Query parse() throws ParseException
+    public Query parse()
     {
       SolrParams params = req.getParams();
 
@@ -205,7 +204,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         catch (IOException e)
         {
           LOG.error("IO exception communicating with MCF authority service: "+e.getMessage(),e);
-          throw new ParseException("IO exception communicating with MCF authority service: "+e.getMessage());
+          throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "IO exception communicating with MCF authority service: "+e.getMessage());
         }
       }
 
