@@ -59,6 +59,9 @@
       </fileset>
       <fileset dir="mcf">
         <include name="README.txt"/>
+        <include name="NOTICE.txt"/>
+        <include name="DEPENDENCIES.txt"/>
+        <include name="LICENSE.txt"/>
       </fileset>
     </copy>
   </target>
@@ -91,22 +94,14 @@
 
   <target name="create-bin-zip" depends="build,set-version">
       <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.zip" update="false">
-        <zipfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
-          <exclude name="/solr/"/>
-          <exclude name="/mcf/"/>
-          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
-          <exclude name="build.xml"/>
+        <zipfileset dir="dist" prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
         </zipfileset>
       </zip>
     </target>
     
   <target name="create-bin-tar" depends="build,set-version">
       <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.tar.gz" compression="gzip" longfile="gnu">
-        <tarfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
-          <exclude name="/solr/"/>
-          <exclude name="/mcf/"/>
-          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
-          <exclude name="build.xml"/>
+        <tarfileset dir="dist" prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
         </tarfileset>
       </tar>
   </target>
