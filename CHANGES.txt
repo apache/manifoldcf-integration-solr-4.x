@@ -3,6 +3,13 @@ $Id$
 
 ======================= 0.4-dev =====================
 
+CONNECTORS-534: Repackage plugins to have a true binary release,
+with appropriate DEPENDENCIES.txt, README's etc.
+(Karl Wright)
+
+Port to Solr 4.1.0.
+(Karl Wright)
+
 ======================= Release 0.3 =====================
 
 CONNECTORS-595: Fix tests to use new initCore() conventions and
