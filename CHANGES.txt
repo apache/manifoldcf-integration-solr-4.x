@@ -1,7 +1,7 @@
 Apache ManifoldCF Solr 4.x Plugin change Log
 $Id$
 
-======================= 0.4-dev =====================
+======================= Release 0.4 =====================
 
 CONNECTORS-534: Repackage plugins to have a true binary release,
 with appropriate DEPENDENCIES.txt, README's etc.
