@@ -49,7 +49,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.slf4j.*;
 
 import java.io.*;
@@ -85,9 +85,10 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
   String fieldDenyDocument = null;
   String fieldAllowShare = null;
   String fieldDenyShare = null;
+  int connectionTimeOut;
   int socketTimeOut;
   Integer connectionManagerSynchronizer = new Integer(0);
-  ThreadSafeClientConnManager httpConnectionManager = null;
+  PoolingClientConnectionManager httpConnectionManager = null;
   DefaultHttpClient client = null;
   int poolSize;
   
@@ -102,6 +103,8 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
     authorityBaseURL = (String)args.get("AuthorityServiceBaseURL");
     if (authorityBaseURL == null)
       authorityBaseURL = "http://localhost:8345/mcf-authority-service";
+    Integer cTimeOut = (Integer)args.get("ConnectionTimeOut");
+    connectionTimeOut = cTimeOut == null ? 60000 : cTimeOut;
     Integer timeOut = (Integer)args.get("SocketTimeOut");
     socketTimeOut = timeOut == null ? 300000 : timeOut;
     String allowAttributePrefix = (String)args.get("AllowAttributePrefix");
@@ -125,13 +128,14 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
       if (client == null)
       {
         // Initialize the connection pool
-        httpConnectionManager = new ThreadSafeClientConnManager();
+        httpConnectionManager = new PoolingClientConnectionManager();
         httpConnectionManager.setMaxTotal(poolSize);
         httpConnectionManager.setDefaultMaxPerRoute(poolSize);
         BasicHttpParams params = new BasicHttpParams();
         params.setBooleanParameter(CoreConnectionPNames.TCP_NODELAY,true);
         params.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,false);
         params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT,socketTimeOut);
+        params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,connectionTimeOut);
         client = new DefaultHttpClient(httpConnectionManager,params);
         client.setRedirectStrategy(new DefaultRedirectStrategy());
         core.addCloseHook(new CloseHandler());
@@ -278,7 +282,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         int rval = httpResponse.getStatusLine().getStatusCode();
         if (rval != 200)
         {
-          String response = EntityUtils.toString(httpResponse.getEntity(),null);
+          String response = EntityUtils.toString(httpResponse.getEntity(),"utf-8");
           throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Couldn't fetch user's access tokens from ManifoldCF authority service: "+Integer.toString(rval)+"; "+response);
         }
         InputStream is = httpResponse.getEntity().getContent();
@@ -329,7 +333,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
       }
       finally
       {
-        //method.releaseConnection();
+        method.abort();
       }
     }
   }

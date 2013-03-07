@@ -41,7 +41,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.slf4j.*;
 
 import java.io.*;
@@ -78,8 +78,9 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
   String fieldDenyDocument = null;
   String fieldAllowShare = null;
   String fieldDenyShare = null;
+  int connectionTimeOut;
   int socketTimeOut;
-  ThreadSafeClientConnManager httpConnectionManager = null;
+  PoolingClientConnectionManager httpConnectionManager = null;
   DefaultHttpClient client = null;
   int poolSize;
   
@@ -98,6 +99,8 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       System.out.println("USING DEFAULT BASE URL!!");
       authorityBaseURL = "http://localhost:8345/mcf-authority-service";
     }
+    Integer cTimeOut = (Integer)args.get("ConnectionTimeOut");
+    connectionTimeOut = cTimeOut == null ? 60000 : cTimeOut;
     Integer timeOut = (Integer)args.get("SocketTimeOut");
     socketTimeOut = timeOut == null ? 300000 : timeOut;
     String allowAttributePrefix = (String)args.get("AllowAttributePrefix");
@@ -114,13 +117,14 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     poolSize = (connectionPoolSize==null)?50:connectionPoolSize.intValue();
 
     // Initialize the connection pool
-    httpConnectionManager = new ThreadSafeClientConnManager();
+    httpConnectionManager = new PoolingClientConnectionManager();
     httpConnectionManager.setMaxTotal(poolSize);
     httpConnectionManager.setDefaultMaxPerRoute(poolSize);
     BasicHttpParams params = new BasicHttpParams();
     params.setBooleanParameter(CoreConnectionPNames.TCP_NODELAY,true);
     params.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,false);
     params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT,socketTimeOut);
+    params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,connectionTimeOut);
     client = new DefaultHttpClient(httpConnectionManager,params);
     client.setRedirectStrategy(new DefaultRedirectStrategy());
   }
@@ -301,7 +305,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       int rval = httpResponse.getStatusLine().getStatusCode();
       if (rval != 200)
       {
-        String response = EntityUtils.toString(httpResponse.getEntity(),null);
+        String response = EntityUtils.toString(httpResponse.getEntity(),"utf-8");
         throw new SolrException(SolrException.ErrorCode.SERVER_ERROR,"Couldn't fetch user's access tokens from ManifoldCF authority service: "+Integer.toString(rval)+"; "+response);
       }
       InputStream is = httpResponse.getEntity().getContent();
@@ -352,7 +356,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     }
     finally
     {
-      //method.releaseConnection();
+      method.abort();
     }
   }
   
