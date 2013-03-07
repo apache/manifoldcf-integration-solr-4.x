@@ -41,7 +41,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.slf4j.*;
 
 import java.io.*;
@@ -80,7 +80,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
   String fieldDenyShare = null;
   int connectionTimeOut;
   int socketTimeOut;
-  PoolingClientConnectionManager httpConnectionManager = null;
+  ThreadSafeClientConnManager httpConnectionManager = null;
   DefaultHttpClient client = null;
   int poolSize;
   
@@ -117,7 +117,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     poolSize = (connectionPoolSize==null)?50:connectionPoolSize.intValue();
 
     // Initialize the connection pool
-    httpConnectionManager = new PoolingClientConnectionManager();
+    httpConnectionManager = new ThreadSafeClientConnManager();
     httpConnectionManager.setMaxTotal(poolSize);
     httpConnectionManager.setDefaultMaxPerRoute(poolSize);
     BasicHttpParams params = new BasicHttpParams();
