@@ -1,10 +1,10 @@
-Apache ManifoldCF Solr-4.x Plugin requires
-----------------------------------------
+Apache ManifoldCF Plugin for Apache Solr 4.x requires
+---------------------------------------------------
 * Apache Solr 4.x
 * JRE 1.6 or above
 
-For running Apache ManifoldCF Solr-4.x Plugin:
---------------------------------------------
+For running Apache ManifoldCF Plugin for Apache Solr 4.x:
+------------------------------------------------------
 
 * Look at README.txt
 

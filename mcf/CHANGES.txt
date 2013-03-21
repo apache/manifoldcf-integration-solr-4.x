@@ -1,7 +1,8 @@
-Apache Solr ManifoldCF security Library
-		Release Notes
+Apache ManifoldCF Plugin for Apache Solr 4.x
+Release Notes
 
-This file describes changes to the Solr ManifoldCF security package (contrib/mcf) module.
+This file describes changes to the Apache ManifoldCF Plugin for Apache Solr 4.x security package
+(contrib/mcf) module.
 
 Introduction
 ------------

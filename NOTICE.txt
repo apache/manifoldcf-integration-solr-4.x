@@ -1,4 +1,4 @@
-Apache ManifoldCF Solr-4.x Plugin
+Apache ManifoldCF Plugin for Apache Solr 4.x 
 Copyright 2010-2013 The Apache Software Foundation
 
 This product includes software developed by
