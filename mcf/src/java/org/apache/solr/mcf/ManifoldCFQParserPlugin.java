@@ -63,8 +63,15 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
 {
   /** The component name */
   static final public String COMPONENT_NAME = "mcf";
-  /** The parameter that is supposed to contain the authenticated user name, possibly including the domain */
+  /** The parameter that is supposed to contain the authenticated user name, possibly including the AD domain */
   static final public String AUTHENTICATED_USER_NAME = "AuthenticatedUserName";
+  /** The parameter that is supposed to contain the MCF authorization domain, if any */
+  static final public String AUTHENTICATED_USER_DOMAIN = "AuthenticatedUserDomain";
+  /** If there are more than one user/domain, this prefix will allow us to get the users... */
+  static final public String AUTHENTICATED_USER_NAME_PREFIX = "AuthenticatedUserName_";
+  /** If there are more than one user/domain, this prefix will allow us to get the authorization domains... */
+  static final public String AUTHENTICATED_USER_DOMAIN_PREFIX = "AuthenticatedUserDomain_";
+
   /** This parameter is an array of strings, which contain the tokens to use if there is no authenticated user name.
    * It's meant to work with mod_authz_annotate,
    * running under Apache */
@@ -167,11 +174,36 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
 
       List<String> userAccessTokens;
       
+      // Map from domain to user
+      Map<String,String> domainMap = new HashMap<String,String>();
+      
       // Get the authenticated user name from the parameters
       String authenticatedUserName = params.get(AUTHENTICATED_USER_NAME);
+      if (authenticatedUserName != null)
+      {
+        String authenticatedUserDomain = params.get(AUTHENTICATED_USER_DOMAIN);
+        if (authenticatedUserDomain == null)
+          authenticatedUserDomain = "";
+        domainMap.put(authenticatedUserDomain, authenticatedUserName);
+      }
+      else
+      {
+        // Look for user names/domains using the prefix
+        int i = 0;
+        while (true)
+        {
+          String userName = params.get(AUTHENTICATED_USER_NAME_PREFIX+i);
+          String domain = params.get(AUTHENTICATED_USER_DOMAIN+i);
+          if (userName == null)
+            break;
+          if (domain == null)
+            domain = "";
+          domainMap.put(domain,userName);
+        }
+      }
       
       // If this parameter is empty or does not exist, we have to presume this is a guest, and treat them accordingly
-      if (authenticatedUserName == null || authenticatedUserName.length() == 0)
+      if (domainMap.size() == 0)
       {
         // No authenticated user name.
         // mod_authz_annotate may be in use upstream, so look for tokens from it.
@@ -194,7 +226,18 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
       }
       else
       {
-        LOG.info("Trying to match docs for user '"+authenticatedUserName+"'");
+        StringBuilder sb = new StringBuilder("[");
+        boolean first = true;
+        for (String domain : domainMap.keySet())
+        {
+          if (!first)
+            sb.append(",");
+          else
+            first = false;
+          sb.append(domain).append(":").append(domainMap.get(domain));
+        }
+        sb.append("]");
+        LOG.info("Trying to match docs for user '"+sb.toString()+"'");
         // Valid authenticated user name.  Look up access tokens for the user.
         // Check the configuration arguments for validity
         if (authorityBaseURL == null)
@@ -203,7 +246,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         }
         try
         {
-          userAccessTokens = getAccessTokens(authenticatedUserName);
+          userAccessTokens = getAccessTokens(domainMap);
         }
         catch (IOException e)
         {
@@ -269,11 +312,24 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
     // Protected methods
     
     /** Get access tokens given a username */
-    protected List<String> getAccessTokens(String authenticatedUserName)
+    protected List<String> getAccessTokens(Map<String,String> domainMap)
       throws IOException
     {
       // We can make this more complicated later, with support for https etc., but this is enough to demonstrate how it all should work.
-      String theURL = authorityBaseURL + "/UserACLs?username="+URLEncoder.encode(authenticatedUserName,"utf-8");
+      StringBuilder urlBuffer = new StringBuilder(authorityBaseURL);
+      urlBuffer.append("/UserACLs");
+      int i = 0;
+      for (String domain : domainMap.keySet())
+      {
+        if (i == 0)
+          urlBuffer.append("?");
+        else
+          urlBuffer.append("&");
+        urlBuffer.append("username_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domainMap.get(domain),"utf-8")).append("&")
+          .append("domain_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domain,"utf-8"));
+        i++;
+      }
+      String theURL = urlBuffer.toString();
         
       HttpGet method = new HttpGet(theURL);
       try
@@ -311,7 +367,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
                 else
                 {
                   // It probably says something about the state of the authority(s) involved, so log it
-                  LOG.info("For user '"+authenticatedUserName+"', saw authority response "+line);
+                  LOG.info("Saw authority response "+line);
                 }
               }
               return tokenList;
