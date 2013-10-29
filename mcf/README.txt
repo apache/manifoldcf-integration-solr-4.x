@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+Compatibility
+------------
+
+This version of this component is only compatible with ManifoldCF 1.5 and above, and cannot be used with earlier releases of ManifoldCF.
 
 Getting Started
 ---------------
@@ -72,4 +76,35 @@ Hook up the search component in the solrconfig.xml file wherever you want it, e.
   </arr>
   ...
 </requestHandler>
+
+
+Supplying authenticated usernames and domains
+----------------------------------------------
+
+This component looks for the following parameters in the Solr request object:
+
+AuthenticatedUserName
+AuthenticatedUserDomain
+AuthenticatedUserName_XX
+AuthenticatedUserDomain_XX
+
+At a minimum, AuthenticatedUserName must be present in order for the component to communicate with
+the ManifoldCF Authority Service and obtain user access tokens.  In that case, the user identity will consist
+of one user and one authorization domain.  If AuthenticatedUserDomain is not set, then the authorization domain
+chosen will be the standard default domain, an empty string.
+
+If you need multiple user/domain tuples for the user identity, you may pass these as parameter pairs starting with
+AuthenticatedUserName_0 and AuthenticatedUserDomain_0, and counting up as high as you like.
+
+Operation in conjunction with mod-authz-annotate
+------------------------------------------------
+
+An optional component of ManifoldCF can be built and deployed as part of Apache - mod-authz-annotate.  The
+mod-authz-annotate module obtains the Kerberos principal from the Kerberos tickets present if mod-auth-kerb is used, and uses
+the MCF Authority Service to look up the appropriate access tokens.  If you choose to use that architecture,
+you will still need to use this Solr component to modify the user query.  All you have to do is the following:
+
+- Make sure you do not set AuthenticatedUserName or AuthenticatedUserName_0 in the request
+- Make sure the HTTP request from Apache to Solr translates all AAAGRP header values into "UserToken" parameters
+   for the Solr request
 

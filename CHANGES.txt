@@ -3,6 +3,11 @@ $Id$
 
 ======================= 0.5-dev =====================
 
+Add functionality making the plugin compatible with multi-domain
+features of ManifoldCF.  Specifically, allow multiple domain/username
+tuples to be passed in the request.
+(Karl Wright)
+
 ======================= Release 0.4 =====================
 
 CONNECTORS-534: Repackage plugins to have a true binary release,
