@@ -1,7 +1,7 @@
 Apache ManifoldCF Plugin for Apache Solr 4.x change Log
 $Id$
 
-======================= 0.5-dev =====================
+======================= 1.1-dev =====================
 
 Add functionality making the plugin compatible with multi-domain
 features of ManifoldCF.  Specifically, allow multiple domain/username
