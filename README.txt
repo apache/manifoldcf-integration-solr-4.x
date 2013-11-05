@@ -17,8 +17,8 @@
 Compatibility
 ------------
 
-This version of this component is only compatible with ManifoldCF 1.5 and above,
-and cannot be used with earlier releases of ManifoldCF.
+This version of this component is fully functional with Apache ManifoldCF 1.5 and
+above.  It is backwards compatible with earlier versions as well.
 
 Instructions for Building Apache ManifoldCF Plugin for Apache Solr 4.x from Source
 ------------------------------------------------------------------------------
