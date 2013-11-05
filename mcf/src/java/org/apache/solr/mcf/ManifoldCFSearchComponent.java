@@ -348,8 +348,16 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
         urlBuffer.append("?");
       else
         urlBuffer.append("&");
-      urlBuffer.append("username_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domainMap.get(domain),"utf-8")).append("&")
-        .append("domain_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domain,"utf-8"));
+      // For backwards compatibility, handle the singleton case specially
+      if (domainMap.size() == 1 && domain.length() == 0)
+      {
+        urlBuffer.append("username=").append(URLEncoder.encode(domainMap.get(domain),"utf-8"));
+      }
+      else
+      {
+        urlBuffer.append("username_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domainMap.get(domain),"utf-8")).append("&")
+          .append("domain_").append(Integer.toString(i)).append("=").append(URLEncoder.encode(domain,"utf-8"));
+      }
       i++;
     }
     String theURL = urlBuffer.toString();
