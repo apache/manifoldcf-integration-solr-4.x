@@ -185,6 +185,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
         if (domain == null)
           domain = "";
         domainMap.put(domain,userName);
+        i++;
       }
     }
       

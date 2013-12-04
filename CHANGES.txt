@@ -1,6 +1,11 @@
 Apache ManifoldCF Plugin for Apache Solr 4.x change Log
 $Id$
 
+======================= Release 1.1.1 =====================
+
+CONNECTORS-825: Fix infinite loop parsing multi-domain arguments.
+(Shinichiro Abe)
+
 ======================= Release 1.1 =====================
 
 Add functionality making the plugin compatible with multi-domain
