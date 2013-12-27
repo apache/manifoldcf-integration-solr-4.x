@@ -29,7 +29,7 @@
     <mkdir dir="solr" />
     <exec dir="solr" executable="svn" failifexecutionfails="true" failonerror="true">
       <arg value="checkout" />
-      <arg value="http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_1_0/" />
+      <arg value="http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_6_0/" />
       <arg value="." />
     </exec>
   </target>

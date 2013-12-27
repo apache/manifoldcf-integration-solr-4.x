@@ -3,10 +3,12 @@ $Id$
 
 ======================= 1.2-dev =====================
 
-CONNECTORS-825: Fix infinite loop parsing multi-domain arguments.
-(Shinichiro Abe)
+CONNECTORS-848: Build against Lucene/Solr 4.6.0.
 
 ======================= Release 1.1 =====================
+
+CONNECTORS-825: Fix infinite loop parsing multi-domain arguments.
+(Shinichiro Abe)
 
 Add functionality making the plugin compatible with multi-domain
 features of ManifoldCF.  Specifically, allow multiple domain/username
