@@ -132,7 +132,7 @@
       </tar>
   </target>
 
-  <target name="image" depends="create-source-zip,create-source-tar,create-bin-zip,create-bin-tar"/>
+  <target name="image" depends="create-source-zip,create-source-tar,create-bin-zip,create-bin-tar" if="downloaded"/>
 
   <target name="help">
     <echo level="info">
@@ -148,9 +148,8 @@ build      - Build jar under the 'dist' directory
 test       - Run the tests
 image      - Package the sources and binaries
 
-Prerequisites: This build requires Subversion (svn) to be
-installed, and svn internet access to the Apache repository.
-It also requires Java jdk1.6.0 or above.
+Prerequisites: This build Java jdk1.6.0 or above,
+and Apache Ivy 2.2 or above.
     </echo>
   </target>
   
