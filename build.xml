@@ -26,15 +26,39 @@
   </target>
   
   <target name="download-solr">
-    <mkdir dir="solr" />
-    <exec dir="solr" executable="svn" failifexecutionfails="true" failonerror="true">
-      <arg value="checkout" />
-      <arg value="http://svn.apache.org/repos/asf/lucene/dev/tags/lucene_solr_4_6_0/" />
-      <arg value="." />
-    </exec>
+    <mkdir dir="download" />
+    <!-- Download and unpack binary artifact -->
+    <get src="http://archive.apache.org/dist/lucene/solr/4.6.1/solr-4.6.1-src.tgz" dest="download/solr.tgz"/>
+    <untar src="download/solr.tgz" dest="download/solr" compression="gzip"/>
   </target>
   
-  <target name="copy-sources" depends="download-solr">
+  <target name="make-deps" depends="download-solr">
+  </target>
+  
+  <target name="clean-deps">
+    <delete dir="download"/>
+  </target>
+  
+  <target name="downloaded-condition">
+    <available file="download/solr/solr-4.6.1/README.txt" property="CHANGES-found"/>
+    <condition property="downloaded">
+      <and>
+        <isset property="CHANGES-found"/>
+      </and>
+    </condition>
+  </target>
+
+  <target name="downloaded-check" depends="downloaded-condition" unless="downloaded">
+    <echo message="Run 'make-deps' target first"/>
+  </target>
+
+  <target name="copy-solr" depends="downloaded-check" if="downloaded">
+    <copy todir="solr">
+      <fileset dir="download/solr/solr-4.6.1"/>
+    </copy>
+  </target>
+  
+  <target name="copy-sources" depends="copy-solr" if="downloaded">
     <mkdir dir="solr/solr/contrib/mcf"/>
     <copy todir="solr/solr/contrib/mcf">
       <fileset dir="mcf">
@@ -43,15 +67,15 @@
     </copy>
   </target>
   
-  <target name="compile" depends="copy-sources">
+  <target name="compile" depends="copy-sources" if="downloaded">
     <ant dir="solr/solr/contrib/mcf" target="default"/>
   </target>
   
-  <target name="test" depends="copy-sources">
+  <target name="test" depends="copy-sources" if="downloaded">
     <ant dir="solr/solr/contrib/mcf" target="test"/>
   </target>
   
-  <target name="deliver" depends="compile">
+  <target name="deliver" depends="compile" if="downloaded">
     <mkdir dir="dist"/>
     <copy todir="dist">
       <fileset dir="solr/solr/build/contrib/solr-mcf">
@@ -66,7 +90,7 @@
     </copy>
   </target>
 
-  <target name="build" depends="deliver"/>
+  <target name="build" depends="deliver" if="downloaded"/>
 
   <target name="set-version">
       <property name="release-version" value="1.2-dev"/>
@@ -75,6 +99,7 @@
   <target name="create-source-zip" depends="set-version">
       <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.zip" update="false">
         <zipfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
+          <exclude name="/download/"/>
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
           <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
@@ -85,6 +110,7 @@
   <target name="create-source-tar" depends="set-version">
       <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.tar.gz" compression="gzip" longfile="gnu">
         <tarfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
+          <exclude name="/download/"/>
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
           <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
@@ -92,14 +118,14 @@
       </tar>
   </target>
 
-  <target name="create-bin-zip" depends="build,set-version">
+  <target name="create-bin-zip" depends="build,set-version" if="downloaded">
       <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.zip" update="false">
         <zipfileset dir="dist" prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
         </zipfileset>
       </zip>
     </target>
     
-  <target name="create-bin-tar" depends="build,set-version">
+  <target name="create-bin-tar" depends="build,set-version" if="downloaded">
       <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-bin.tar.gz" compression="gzip" longfile="gnu">
         <tarfileset dir="dist" prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
         </tarfileset>
@@ -115,10 +141,12 @@ build the plugin distributables and run the tests.
 
 Useful targets are:
 
-clean   - Clean the build area
-build   - Build jar under the 'dist' directory
-test    - Run the tests
-image - Package the sources and binaries
+clean-deps - Clean dependencies
+make-deps  - Download dependencies
+clean      - Clean the build area
+build      - Build jar under the 'dist' directory
+test       - Run the tests
+image      - Package the sources and binaries
 
 Prerequisites: This build requires Subversion (svn) to be
 installed, and svn internet access to the Apache repository.
