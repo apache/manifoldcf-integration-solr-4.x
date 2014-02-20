@@ -34,6 +34,14 @@ documents and shares, and a 'deny' field for both documents and shares.  For exa
   <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
   <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
 
+If needed, there will need to plus two of these fields for directory.
+[allow|deny]_token_directory_N. N is the number that is greater than or equal to zero.
+Currently directory_0 is supported in Jcifs connector. 
+
+  <field name="allow_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+
+
 Using the Query Parser Plugin
 ----------------------------
 
@@ -77,6 +85,21 @@ Hook up the search component in the solrconfig.xml file wherever you want it, e.
   ...
 </requestHandler>
 
+
+Supplying token_directory for filtering
+----------------------------------------------
+
+This component looks for the following parameter in the Solr request object:
+
+mcf.auth.directoryCount
+
+If you do not use [allow|deny]_token_directory_N fields in your schema.xml,
+you may specify 0. Default to 0.
+You can specify the count of directory_N pairs. When using directory_0, set to 1. 
+Using this parameter value, this component will filter documents.
+If null or 0, then the filtering by share, document.
+If 1, then the filtering by share, direcory_0, document.
+If 2, then the filtering by share, direcory_0, direcory_1, document.
 
 Supplying authenticated usernames and domains
 ----------------------------------------------

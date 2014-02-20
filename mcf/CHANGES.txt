@@ -13,9 +13,9 @@ require the argument "AuthorityServiceBaseURL", which describes the URL needed t
 the ManifoldCF Authority Service.  Other optional parameters are:
 
 AllowAttributePrefix - the first part of the 'allow' family of fields, e.g. "allow_token_document" or
-	"allow_token_share", defaulting to "allow_token_".
+	"allow_token_share" or "allow_token_directory_0", defaulting to "allow_token_".
 DenyAttributePrefix - the first part of the 'deny' family of fields, e.g. "deny_token_document" or
-	"deny_token_share", defaulting to "deny_token_".
+	"deny_token_share" or "deny_token_directory_0", defaulting to "deny_token_".
 ConnectionPoolSize - the size of the connection pool (default is 50).
 
 $Id$

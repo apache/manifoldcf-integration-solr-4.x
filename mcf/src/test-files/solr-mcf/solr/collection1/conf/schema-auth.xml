@@ -26,6 +26,8 @@
   <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" default="__nosecurity__"/>
   <field name="allow_token_share" type="string" indexed="true" stored="false" multiValued="true" default="__nosecurity__"/>
   <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" default="__nosecurity__"/>
+  <field name="allow_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" default="__nosecurity__"/>
+  <field name="deny_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" default="__nosecurity__"/>
  </fields>
  <defaultSearchField>id</defaultSearchField>
  <uniqueKey>id</uniqueKey>
