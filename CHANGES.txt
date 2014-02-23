@@ -1,8 +1,6 @@
 Apache ManifoldCF Plugin for Apache Solr 4.x change Log
 $Id$
 
-======================= 1.3-dev =====================
-
 ======================= Release 1.2 =====================
 
 CONNECTORS-886: Provide [allow|deny]_token_parent fields.
