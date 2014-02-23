@@ -65,9 +65,6 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
   /** If there are more than one user/domain, this prefix will allow us to get the authorization domains... */
   static final public String AUTHENTICATED_USER_DOMAIN_PREFIX = "AuthenticatedUserDomain_";
 
-  /** The parameter that is supposed to contain token_directory for filtering */
-  static final public String AUTH_DIRECTORYCOUNT = COMPONENT_NAME+".auth.directoryCount";
-
   /** This parameter is an array of strings, which contain the tokens to use if there is no authenticated user name.
    * It's meant to work with mod_authz_annotate,
    * running under Apache */
@@ -88,8 +85,8 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
   String fieldDenyDocument = null;
   String fieldAllowShare = null;
   String fieldDenyShare = null;
-  String fieldAllowDirectory = null;
-  String fieldDenyDirectory = null;
+  String fieldAllowParent = null;
+  String fieldDenyParent = null;
   int connectionTimeOut;
   int socketTimeOut;
   ThreadSafeClientConnManager httpConnectionManager = null;
@@ -125,8 +122,8 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     fieldDenyDocument = denyAttributePrefix+"document";
     fieldAllowShare = allowAttributePrefix+"share";
     fieldDenyShare = denyAttributePrefix+"share";
-    fieldAllowDirectory = allowAttributePrefix+"directory_";
-    fieldDenyDirectory = denyAttributePrefix+"directory_";
+    fieldAllowParent = allowAttributePrefix+"parent";
+    fieldDenyParent = denyAttributePrefix+"parent";
     Integer connectionPoolSize = (Integer)args.get("ConnectionPoolSize");
     poolSize = (connectionPoolSize==null)?50:connectionPoolSize.intValue();
 
@@ -241,25 +238,13 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       userAccessTokens = getAccessTokens(domainMap);
     }
 
-    // Get the auth directory field count from the parameter
-    int directoryCount = params.getInt(AUTH_DIRECTORYCOUNT, 0);
-
     BooleanQuery bq = new BooleanQuery();
     //bf.setMaxClauseCount(100000);
     
     Query allowShareOpen = new TermQuery(new Term(fieldAllowShare,NOSECURITY_TOKEN));
     Query denyShareOpen = new TermQuery(new Term(fieldDenyShare,NOSECURITY_TOKEN));
-    Map<Integer,Query> allowDirectoryOpenMap = new HashMap<Integer,Query>();
-    Map<Integer,Query> denyDirectoryOpenMap = new HashMap<Integer,Query>();
-    int q = 0;
-    while (q < directoryCount)
-    {
-      Query allowDirectoryOpen = new TermQuery(new Term(fieldAllowDirectory+q,NOSECURITY_TOKEN));
-      Query denyDirectoryOpen = new TermQuery(new Term(fieldDenyDirectory+q,NOSECURITY_TOKEN));
-      allowDirectoryOpenMap.put(Integer.valueOf(q), allowDirectoryOpen);
-      denyDirectoryOpenMap.put(Integer.valueOf(q), denyDirectoryOpen);
-      q++;
-    }
+    Query allowParentOpen = new TermQuery(new Term(fieldAllowParent,NOSECURITY_TOKEN));
+    Query denyParentOpen = new TermQuery(new Term(fieldDenyParent,NOSECURITY_TOKEN));
     Query allowDocumentOpen = new TermQuery(new Term(fieldAllowDocument,NOSECURITY_TOKEN));
     Query denyDocumentOpen = new TermQuery(new Term(fieldDenyDocument,NOSECURITY_TOKEN));
     
@@ -272,16 +257,8 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       // have the SolrConnector inject a special token into these fields when they otherwise would be empty, and we can trivially match on that token.
       bq.add(allowShareOpen,BooleanClause.Occur.MUST);
       bq.add(denyShareOpen,BooleanClause.Occur.MUST);
-      int r = 0;
-      while (r < directoryCount)
-      {
-        Integer index = Integer.valueOf(r);
-        Query allowDirectoryOpen = allowDirectoryOpenMap.get(index);
-        Query denyDirectoryOpen = denyDirectoryOpenMap.get(index);
-        bq.add(allowDirectoryOpen,BooleanClause.Occur.MUST);
-        bq.add(denyDirectoryOpen,BooleanClause.Occur.MUST);
-        r++;
-      }
+      bq.add(allowParentOpen,BooleanClause.Occur.MUST);
+      bq.add(denyParentOpen,BooleanClause.Occur.MUST);
       bq.add(allowDocumentOpen,BooleanClause.Occur.MUST);
       bq.add(denyDocumentOpen,BooleanClause.Occur.MUST);
     }
@@ -290,16 +267,8 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       // Extend the query appropriately for each user access token.
       bq.add(calculateCompleteSubquery(fieldAllowShare,fieldDenyShare,allowShareOpen,denyShareOpen,userAccessTokens),
         BooleanClause.Occur.MUST);
-      int r = 0;
-      while (r < directoryCount)
-      {
-        Integer index = Integer.valueOf(r);
-        Query allowDirectoryOpen = allowDirectoryOpenMap.get(index);
-        Query denyDirectoryOpen = denyDirectoryOpenMap.get(index);
-        bq.add(calculateCompleteSubquery(fieldAllowDirectory+r,fieldDenyDirectory+r,allowDirectoryOpen,denyDirectoryOpen,userAccessTokens),
-          BooleanClause.Occur.MUST);
-        r++;
-      }
+      bq.add(calculateCompleteSubquery(fieldAllowParent,fieldDenyParent,allowParentOpen,denyParentOpen,userAccessTokens),
+        BooleanClause.Occur.MUST);
       bq.add(calculateCompleteSubquery(fieldAllowDocument,fieldDenyDocument,allowDocumentOpen,denyDocumentOpen,userAccessTokens),
         BooleanClause.Occur.MUST);
     }

@@ -50,7 +50,6 @@
   <requestHandler name="/mcf" class="solr.SearchHandler" startup="lazy">
     <lst name="invariants">
       <bool name="mcf">true</bool>
-      <int name="mcf.auth.directoryCount">1</int>
     </lst>
     <lst name="defaults">
       <str name="echoParams">all</str>

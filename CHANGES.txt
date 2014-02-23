@@ -3,10 +3,9 @@ $Id$
 
 ======================= 1.2-dev =====================
 
-CONNECTORS-886: Provide [allow|deny]_token_directory_N fields.
-With mcf.auth.directoryCount param, we can control
-token_directory fields filtering. 
-(Shinichiro Abe)
+CONNECTORS-886: Provide [allow|deny]_token_parent fields.
+Upgrade to this version now requires reindexing.
+(Shinichiro Abe, Karl Wright)
 
 CONNECTORS-848: Build against Lucene/Solr 4.6.0.
 

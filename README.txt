@@ -17,8 +17,17 @@
 Compatibility
 ------------
 
-This version of this component is fully functional with Apache ManifoldCF 1.5 and
-above.  It is backwards compatible with earlier versions as well.
+This version of this component is fully functional with Apache ManifoldCF 1.6 and
+above.  It is backwards compatible with earlier versions as well, except for the fact
+that two additional Solr fields are required for this plugin to work.
+
+Upgrading
+---------
+
+If you are replacing a version of Apache ManifoldCF Plugin for Apache Solr 4.x that is
+older than version 1.2, you must declare two additional fields (representing parent
+acls and parent deny acls), and reindex all your documents.  Otherwise, the plugin
+will prevent you from viewing any documents.
 
 Instructions for Building Apache ManifoldCF Plugin for Apache Solr 4.x from Source
 ------------------------------------------------------------------------------

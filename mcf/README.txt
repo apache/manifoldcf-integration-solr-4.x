@@ -16,30 +16,48 @@
 Compatibility
 ------------
 
-This version of this component is only compatible with ManifoldCF 1.5 and above, and cannot be used with earlier releases of ManifoldCF.
+This version of this component is fully functional with Apache ManifoldCF 1.6 and
+above.  It is backwards compatible with earlier versions as well, except for the fact
+that two additional Solr fields are required for this plugin to work.
+
 
 Getting Started
 ---------------
 
-There are two ways to hook up security to Solr in this package.  The first is using a Query Parser plugin.
-The second is using a Search Component.  In both cases, the first step is to have ManifoldCF installed and running.  See:
+There are two ways to hook up security to Solr in this package.  The first is using
+a Query Parser plugin.  The second is using a Search Component.  In both cases,
+the first step is to have ManifoldCF installed and running.  See:
 http://manifoldcf.apache.org/release/trunk/en_US/how-to-build-and-deploy.html
 
-Then, you will need to add fields to your Solr schema.xml file that can be used to contain document
-authorization information.  There will need to be four of these fields, an 'allow' field for both
-documents and shares, and a 'deny' field for both documents and shares.  For example:
+Then, you will need to add fields to your Solr schema.xml file that can be used
+to contain document authorization information.  There will need to be six of these
+fields, an 'allow' field for documents, parents, and shares, and a 'deny' field for
+documents, parents, and shares.  For example:
 
-  <field name="allow_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
-  <field name="allow_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
-  <field name="deny_token_document" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
-  <field name="deny_token_share" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="allow_token_document" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="allow_token_parent" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="allow_token_share" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_document" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_parent" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
+  <field name="deny_token_share" type="string" indexed="true" stored="false"
+    multiValued="true" required="false" default="__nosecurity__"/>
 
-If needed, there will need to plus two of these fields for directory.
-[allow|deny]_token_directory_N. N is the number that is greater than or equal to zero.
-Currently directory_0 is supported in Jcifs connector. 
+The default value of "__nosecurity__" is required by this plugin, so do not forget
+to include it.
 
-  <field name="allow_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
-  <field name="deny_token_directory_0" type="string" indexed="true" stored="false" multiValued="true" required="false" default="__nosecurity__"/>
+
+Upgrading from releases earlier than 1.2
+--------------------------------------
+
+Earlier releases of this plugin only required four special fields.  Since this version
+of the plugin requires six, when upgrading it will be necessary to reindex all
+documents, so all six fields have the correct values.  Otherwise, the plugin
+will prevent you from viewing any documents.
 
 
 Using the Query Parser Plugin
@@ -85,21 +103,6 @@ Hook up the search component in the solrconfig.xml file wherever you want it, e.
   ...
 </requestHandler>
 
-
-Supplying token_directory for filtering
-----------------------------------------------
-
-This component looks for the following parameter in the Solr request object:
-
-mcf.auth.directoryCount
-
-If you do not use [allow|deny]_token_directory_N fields in your schema.xml,
-you may specify 0. Default to 0.
-You can specify the count of directory_N pairs. When using directory_0, set to 1. 
-Using this parameter value, this component will filter documents.
-If null or 0, then the filtering by share, document.
-If 1, then the filtering by share, direcory_0, document.
-If 2, then the filtering by share, direcory_0, direcory_1, document.
 
 Supplying authenticated usernames and domains
 ----------------------------------------------
