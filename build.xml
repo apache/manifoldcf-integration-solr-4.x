@@ -102,6 +102,7 @@
           <exclude name="/download/"/>
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
+          <exclude name="/download/"/>
           <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
         </zipfileset>
       </zip>
@@ -113,6 +114,7 @@
           <exclude name="/download/"/>
           <exclude name="/solr/"/>
           <exclude name="/dist/"/>
+          <exclude name="/download/"/>
           <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
         </tarfileset>
       </tar>
