@@ -93,7 +93,7 @@
   <target name="build" depends="deliver" if="downloaded"/>
 
   <target name="set-version">
-      <property name="release-version" value="1.3-dev"/>
+      <property name="release-version" value="2.1-dev"/>
   </target>
     
   <target name="create-source-zip" depends="set-version">
