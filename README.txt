@@ -25,7 +25,7 @@ Upgrading
 ---------
 
 If you are replacing a version of Apache ManifoldCF Plugin for Apache Solr 4.x that is
-older than version 1.2, you must declare two additional fields (representing parent
+older than version 2.0, you must declare two additional fields (representing parent
 acls and parent deny acls), and reindex all your documents.  Otherwise, the plugin
 will prevent you from viewing any documents.
 
