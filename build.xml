@@ -99,11 +99,10 @@
   <target name="create-source-zip" depends="set-version">
       <zip destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.zip" update="false">
         <zipfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
-          <exclude name="/download/"/>
-          <exclude name="/solr/"/>
-          <exclude name="/dist/"/>
-          <exclude name="/download/"/>
-          <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
+          <exclude name="download/"/>
+          <exclude name="solr/"/>
+          <exclude name="dist/"/>        
+          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
         </zipfileset>
       </zip>
     </target>
@@ -111,11 +110,10 @@
   <target name="create-source-tar" depends="set-version">
       <tar destfile="apache-manifoldcf-solr-4.x-plugin-${release-version}-src.tar.gz" compression="gzip" longfile="gnu">
         <tarfileset dir="." prefix="apache-manifoldcf-solr-4.x-plugin-${release-version}">
-          <exclude name="/download/"/>
-          <exclude name="/solr/"/>
-          <exclude name="/dist/"/>
-          <exclude name="/download/"/>
-          <exclude name="/apache-manifoldcf-solr-4.x-plugin-*"/>
+          <exclude name="download/"/>
+          <exclude name="solr/"/>
+          <exclude name="dist/"/>        
+          <exclude name="apache-manifoldcf-solr-4.x-plugin-*"/>
         </tarfileset>
       </tar>
   </target>
