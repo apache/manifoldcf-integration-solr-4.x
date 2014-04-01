@@ -18,7 +18,6 @@ package org.apache.solr.mcf;
 
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
-import org.apache.lucene.queries.*;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.ShardParams;
@@ -29,14 +28,9 @@ import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.apache.solr.core.SolrCore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.HttpResponse;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -338,6 +332,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
     return "$URL$";
   }
 
+  @Override
   public void inform(SolrCore core)
   {
     core.addCloseHook(new CloseHandler());
