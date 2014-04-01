@@ -49,7 +49,7 @@ Instructions for Building Apache ManifoldCF Plugin for Apache Solr 4.x from Sour
 
    The JAR packages can be found in the target folder:
 
-   target/solr3x-plugin-mcf-<VERSION>.jar where <VERSION> is the release version
+   target/solr4x-plugin-mcf-<VERSION>.jar where <VERSION> is the release version
 
 
 Getting Started
