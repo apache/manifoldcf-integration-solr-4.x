@@ -1,8 +1,7 @@
 Apache ManifoldCF Plugin for Apache Solr 4.x requires
 ---------------------------------------------------
 * JRE 1.6 or above
-* ant 1.8 or higher
-* ivy 2.2 or higher
+* mvn 3.0 or higher
 
 For building Apache ManifoldCF Plugin for Apache Solr 4.x:
 ------------------------------------------------------
