@@ -18,9 +18,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.solr.mcf</groupId>
+  <groupId>org.apache.manifoldcf.solr</groupId>
 
-  <name>ManifoldCF Solr4x Plugin</name>
+  <name>ManifoldCF Solr 4.x Plugin</name>
   <artifactId>solr4x-plugin-mcf</artifactId>
   <version>2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -80,6 +80,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.17</version>
         <configuration>
           <argLine>-Xmx1024m</argLine>
         </configuration>
@@ -88,7 +89,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.1</version>
         <configuration>
           <encoding>utf-8</encoding>
           <source>1.6</source>
@@ -98,6 +99,7 @@
 
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -116,6 +118,7 @@
 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/bin.xml</descriptor>
