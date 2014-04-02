@@ -18,33 +18,17 @@ package org.apache.solr.mcf;
 
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
-import org.apache.lucene.queries.*;
 import org.apache.solr.search.QParserPlugin;
 import org.apache.solr.search.QParser;
-import org.apache.solr.common.params.CommonParams;
-import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.common.SolrException;
-import org.apache.solr.common.params.CommonParams;
-import org.apache.solr.common.params.ShardParams;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.NamedList;
-import org.apache.solr.handler.component.ResponseBuilder;
-import org.apache.solr.handler.component.SearchComponent;
 import org.apache.solr.core.CloseHook;
-import org.apache.solr.util.plugin.SolrCoreAware;
 import org.apache.solr.core.SolrCore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.HttpStatus;
-import org.apache.http.HttpException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.HttpResponse;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -197,7 +181,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         while (true)
         {
           String userName = params.get(AUTHENTICATED_USER_NAME_PREFIX+i);
-          String domain = params.get(AUTHENTICATED_USER_DOMAIN+i);
+          String domain = params.get(AUTHENTICATED_USER_DOMAIN_PREFIX+i);
           if (userName == null)
             break;
           if (domain == null)

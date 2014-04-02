@@ -30,7 +30,6 @@ import org.junit.Test;
 
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -40,7 +39,7 @@ public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    initCore("solrconfig-auth-load.xml","schema-auth.xml",getFile("solr-mcf/solr").getAbsolutePath());
+    initCore("solrconfig-auth-load.xml","schema-auth.xml");
     service = new MockMCFAuthorityService();
     service.start();
 
