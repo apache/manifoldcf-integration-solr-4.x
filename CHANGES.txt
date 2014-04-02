@@ -1,7 +1,10 @@
 Apache ManifoldCF Plugin for Apache Solr 4.x change Log
 $Id$
 
-======================= 2.1-dev =====================
+======================= 2.1-SNAPSHOT =====================
+
+CONNECTORS-914: Go to a Maven build system.
+(Ahmet Arslan)
 
 ======================= Release 2.0 =====================
 
