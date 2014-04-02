@@ -177,7 +177,7 @@ public class ManifoldCFSearchComponent extends SearchComponent implements SolrCo
       while (true)
       {
         String userName = params.get(AUTHENTICATED_USER_NAME_PREFIX+i);
-        String domain = params.get(AUTHENTICATED_USER_DOMAIN+i);
+        String domain = params.get(AUTHENTICATED_USER_DOMAIN_PREFIX+i);
         if (userName == null)
           break;
         if (domain == null)
