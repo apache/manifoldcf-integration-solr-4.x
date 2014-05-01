@@ -45,8 +45,6 @@ import java.net.*;
 */
 public class ManifoldCFQParserPlugin extends QParserPlugin
 {
-  /** The component name */
-  static final public String COMPONENT_NAME = "mcf";
   /** The parameter that is supposed to contain the authenticated user name, possibly including the AD domain */
   static final public String AUTHENTICATED_USER_NAME = "AuthenticatedUserName";
   /** The parameter that is supposed to contain the MCF authorization domain, if any */
@@ -63,10 +61,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
   
   /** Special token for null security fields */
   static final public String NOSECURITY_TOKEN = "__nosecurity__";
-  
-  /** The queries that we will not attempt to interfere with */
-  static final private String[] globalAllowed = { "solrpingquery" };
-  
+
   /** A logger we can use */
   private static final Logger LOG = LoggerFactory.getLogger(ManifoldCFQParserPlugin.class);
 
@@ -207,26 +202,25 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         {
           // Only return 'public' documents (those with no security tokens at all)
           LOG.info("Group tokens received from caller");
-          for (String passedToken : passedTokens)
-          {
-            userAccessTokens.add(passedToken);
-          }
+          userAccessTokens.addAll(Arrays.asList(passedTokens));
         }
       }
       else
       {
-        StringBuilder sb = new StringBuilder("[");
-        boolean first = true;
-        for (String domain : domainMap.keySet())
-        {
-          if (!first)
-            sb.append(",");
-          else
-            first = false;
-          sb.append(domain).append(":").append(domainMap.get(domain));
+        if(LOG.isInfoEnabled()){
+          StringBuilder sb = new StringBuilder("[");
+          boolean first = true;
+          for (String domain : domainMap.keySet())
+          {
+            if (!first)
+              sb.append(",");
+            else
+              first = false;
+            sb.append(domain).append(":").append(domainMap.get(domain));
+          }
+          sb.append("]");
+          LOG.info("Trying to match docs for user '"+sb.toString()+"'");
         }
-        sb.append("]");
-        LOG.info("Trying to match docs for user '"+sb.toString()+"'");
         // Valid authenticated user name.  Look up access tokens for the user.
         // Check the configuration arguments for validity
         if (authorityBaseURL == null)

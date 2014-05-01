@@ -18,6 +18,7 @@
 package org.apache.solr.mcf;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +81,7 @@ public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
   @Test
   public void testTimeQueries() throws Exception {
     int i = 0;
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
     while (i < 1000)
     {
       assertQ(req("qt", "/mcf", "q", "*:*", "fl", "id", "AuthenticatedUserName", "user1"),
@@ -94,7 +95,7 @@ public class ManifoldCFSCLoadTest extends SolrTestCaseJ4 {
       
       i++;
     }
-    System.out.println("Query time = "+new Long(System.currentTimeMillis()-startTime));
+    System.out.println("Query time (milliseconds) = " +  TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-startTime));
   }
 
   static class MockMCFAuthorityService {

@@ -6,6 +6,9 @@ $Id$
 CONNECTORS-914: Go to a Maven build system.
 (Ahmet Arslan)
 
+CONNECTORS-934 : Check if log level is enabled before constructing log message.
+(Ahmet Arslan)
+
 ======================= Release 2.0 =====================
 
 CONNECTORS-886: Provide [allow|deny]_token_parent fields.
