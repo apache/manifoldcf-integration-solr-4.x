@@ -22,7 +22,7 @@
 
   <name>ManifoldCF Solr 4.x Plugin</name>
   <artifactId>apache-manifoldcf-solr-4.x-plugin</artifactId>
-  <version>2.1</version>
+  <version>2.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>ManifoldCF Plugin for Apache Solr 4.x</description>
   <inceptionYear>2014</inceptionYear>
