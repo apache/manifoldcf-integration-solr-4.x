@@ -21,24 +21,9 @@
         <format>tar.gz</format>
         <format>zip</format>
     </formats>
-    <moduleSets>
-        <moduleSet>
-            <excludes>
-            </excludes>
-            <binaries>
-                <outputDirectory>lib</outputDirectory>
-                <unpack>false</unpack>
-                <dependencySets>
-                    <dependencySet>
-                        <excludes>
-                            <exclude>org.slf4j:*</exclude>
-                        </excludes>
-                    </dependencySet>
-                </dependencySets>
-            </binaries>
-        </moduleSet>
-    </moduleSets>
+    
     <fileSets>
+        
         <fileSet>
             <directory>target</directory>
             <outputDirectory/>
@@ -48,10 +33,13 @@
                 <include>${project.artifactId}-${project.version}.jar</include>
             </includes>
         </fileSet>
+        
         <fileSet>
+            <directory>.</directory>
+            <outputDirectory/>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
             <includes>
-	    <include>${project.artifactId}-${project.version}.jar</include>
-                <include>**/target/*.jar</include>
                 <include>README.txt</include>
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>

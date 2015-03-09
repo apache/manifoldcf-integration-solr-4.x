@@ -24,10 +24,17 @@
     <fileSets>
         <!-- Release materials -->
         <fileSet>
+            <directory>.</directory>
+            <outputDirectory/>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
             <excludes>
                 <exclude>**/.*</exclude>
                 <exclude>**/.*/**</exclude>
                 <exclude>**/*.iml/**</exclude>
+                <exclude>**/*.patch/**</exclude>
+                <exclude>**/*.sh/**</exclude>
+                <exclude>**/*.bat/**</exclude>
                 <exclude>**/target/**</exclude>
                 <exclude>**/lib/**</exclude>
                 <exclude>**/data/**</exclude>
