@@ -3,6 +3,9 @@ $Id$
 
 ======================= 2.2-SNAPSHOT =====================
 
+CONNECTORS-1194: Stale connection checks enabled.
+(Karl Wright)
+
 ======================= Release 2.1 =====================
 
 CONNECTORS-914: Go to a Maven build system.

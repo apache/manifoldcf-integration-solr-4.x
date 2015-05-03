@@ -123,7 +123,7 @@ public class ManifoldCFQParserPlugin extends QParserPlugin
         httpConnectionManager.setDefaultMaxPerRoute(poolSize);
         BasicHttpParams params = new BasicHttpParams();
         params.setBooleanParameter(CoreConnectionPNames.TCP_NODELAY,true);
-        params.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,false);
+        params.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,true);
         params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT,socketTimeOut);
         params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT,connectionTimeOut);
         client = new DefaultHttpClient(httpConnectionManager,params);
