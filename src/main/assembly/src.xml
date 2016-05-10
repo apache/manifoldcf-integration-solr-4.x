@@ -29,6 +29,7 @@
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>
             <excludes>
+                <exclude>KEYS</exclude>
                 <exclude>**/.*</exclude>
                 <exclude>**/.*/**</exclude>
                 <exclude>**/*.iml/**</exclude>

@@ -40,7 +40,6 @@
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>
             <includes>
-                <include>KEYS</include>
                 <include>README.txt</include>
                 <include>LICENSE.txt</include>
                 <include>NOTICE.txt</include>
